@@ -6,6 +6,8 @@ using Akka.CQRS.Events;
 using Akka.CQRS.Pricing.Commands;
 using Akka.CQRS.Pricing.Events;
 using Akka.CQRS.Pricing.Views;
+using Akka.CQRS.Subscriptions;
+using Akka.CQRS.Subscriptions.DistributedPubSub;
 using Akka.CQRS.Util;
 using Akka.Event;
 using Akka.Persistence;
@@ -24,11 +26,11 @@ namespace Akka.CQRS.Pricing.Actors
         // Take a snapshot every 10 journal entries
         public const int SnapshotEveryN = 10; 
 
-        private readonly IEventsByTagQuery _eventsByTag;
         private MatchAggregate _matchAggregate;
         private readonly IActorRef _mediator;
         private readonly ITimestamper _timestamper;
         private readonly ILoggingAdapter _log = Context.GetLogger();
+        private readonly ITradeEventSubscriptionManager _subscriptionManager;
         private CircularBuffer<IPriceUpdate> _priceUpdates = new CircularBuffer<IPriceUpdate>(MatchAggregate.DefaultSampleSize);
         private CircularBuffer<IVolumeUpdate> _volumeUpdates = new CircularBuffer<IVolumeUpdate>(MatchAggregate.DefaultSampleSize);
         private ICancelable _publishPricesTask;
@@ -39,27 +41,25 @@ namespace Akka.CQRS.Pricing.Actors
         public readonly string TickerSymbol;
         public override string PersistenceId { get; }
 
-        public long QueryOffset { get; private set; }
-
         private class PublishEvents
         {
             public static readonly PublishEvents Instance = new PublishEvents();
             private PublishEvents() { }
         }
 
-        public MatchAggregator(string tickerSymbol, IEventsByTagQuery eventsByTag)
-         : this(tickerSymbol, eventsByTag, DistributedPubSub.Get(Context.System).Mediator, CurrentUtcTimestamper.Instance)
+        public MatchAggregator(string tickerSymbol)
+         : this(tickerSymbol, DistributedPubSub.Get(Context.System).Mediator, CurrentUtcTimestamper.Instance, new DistributedPubSubTradeEventSubscriptionManager(DistributedPubSub.Get(Context.System).Mediator))
         {
         }
 
-        public MatchAggregator(string tickerSymbol, IEventsByTagQuery eventsByTag, IActorRef mediator, ITimestamper timestamper)
+        public MatchAggregator(string tickerSymbol, IActorRef mediator, ITimestamper timestamper, ITradeEventSubscriptionManager subscriptionManager)
         {
             TickerSymbol = tickerSymbol;
             _priceTopic = PriceTopicHelpers.PriceUpdateTopic(TickerSymbol);
             _volumeTopic = PriceTopicHelpers.VolumeUpdateTopic(TickerSymbol);
-            _eventsByTag = eventsByTag;
             _mediator = mediator;
             _timestamper = timestamper;
+            _subscriptionManager = subscriptionManager;
             PersistenceId = EntityIdHelper.IdForPricing(tickerSymbol);
             
             Receives();
@@ -87,14 +87,6 @@ namespace Akka.CQRS.Pricing.Actors
         /// </summary>
         protected override void OnReplaySuccess()
         {
-            var mat = Context.Materializer();
-            var self = Self;
-
-            // transmit all tag events to myself
-            _eventsByTag.EventsByTag(TickerSymbol, Offset.Sequence(QueryOffset))
-                .Where(x => x.Event is Match) // only care about Match events
-                .RunWith(Sink.ActorRef<EventEnvelope>(self, UnexpectedEndOfStream.Instance), mat);
-
             _publishPricesTask = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(TimeSpan.FromSeconds(10),
                 TimeSpan.FromSeconds(10), Self, PublishEvents.Instance, ActorRefs.NoSender);
 
@@ -106,40 +98,37 @@ namespace Akka.CQRS.Pricing.Actors
             _matchAggregate = new MatchAggregate(TickerSymbol, s.AvgPrice, s.AvgVolume);
             _priceUpdates.Enqueue(s.RecentPriceUpdates.ToArray());
             _volumeUpdates.Enqueue(s.RecentVolumeUpdates.ToArray());
-            QueryOffset = s.QueryOffset;
         }
 
         private MatchAggregatorSnapshot SaveAggregateData()
         {
-            return new MatchAggregatorSnapshot(QueryOffset, _matchAggregate.AvgPrice.CurrentAvg, _matchAggregate.AvgVolume.CurrentAvg, _priceUpdates.ToList(), _volumeUpdates.ToList());
+            return new MatchAggregatorSnapshot(_matchAggregate.AvgPrice.CurrentAvg, _matchAggregate.AvgVolume.CurrentAvg, _priceUpdates.ToList(), _volumeUpdates.ToList());
         }
 
         private void Commands()
         {
-            Command<EventEnvelope>(e =>
+            Command<Match>(m => TickerSymbol.Equals(m.StockId), m =>
             {
-                if (e.Event is Match m)
+                if (_matchAggregate == null)
                 {
-                    // update the offset
-                    if (e.Offset is Sequence s)
-                    {
-                        QueryOffset = s.Value;
-                    }
+                    _matchAggregate = new MatchAggregate(TickerSymbol, m.SettlementPrice, m.Quantity);
+                    return;
+                } 
 
-                    if (_matchAggregate == null)
-                    {
-                        _matchAggregate = new MatchAggregate(TickerSymbol, m.SettlementPrice, m.Quantity);
-                        return;
-                    }
-
-                    if (!_matchAggregate.WithMatch(m))
-                    {
-                        _log.Warning("Received Match for ticker symbol [{0}] - but we only accept symbols for [{1}]", m.StockId, TickerSymbol);
-                    }
+                if (!_matchAggregate.WithMatch(m))
+                {
+                    // should never get to here
+                    _log.Warning("Received Match for ticker symbol [{0}] - but we only accept symbols for [{1}]", m.StockId, TickerSymbol);
                 }
             });
 
-            // Command sent by a PriceViewActor to pull down a complete snapshot of active pricing data
+            // Matches for a different ticker symbol
+            Command<Match>(m =>
+            {
+                _log.Warning("Received Match for ticker symbol [{0}] - but we only accept symbols for [{1}]", m.StockId, TickerSymbol);
+            });
+
+            // Command sent to pull down a complete snapshot of active pricing data for this ticker symbol
             Command<FetchPriceAndVolume>(f =>
             {
                 // no price data yet
@@ -175,7 +164,7 @@ namespace Akka.CQRS.Pricing.Actors
                     }
                 });
 
-                // publish updates to in-memory replicas
+                // publish updates to price and volume subscribers
                 _mediator.Tell(new Publish(_priceTopic, latestPrice));
                 _mediator.Tell(new Publish(_volumeTopic, latestVolume));
             });
