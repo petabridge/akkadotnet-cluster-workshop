@@ -11,14 +11,14 @@ namespace Akka.CQRS.Pricing.Subscriptions.NoOp
         public static readonly NoOpMarketEventSubscriptionManager Instance = new NoOpMarketEventSubscriptionManager();
         private NoOpMarketEventSubscriptionManager() { }
 
-        public override async Task<MarketSubscribeAck> Subscribe(string tickerSymbol, MarketEventType[] events, IActorRef subscriber)
+        public override Task<MarketSubscribeAck> Subscribe(string tickerSymbol, MarketEventType[] events, IActorRef subscriber)
         {
-            return new MarketSubscribeAck(tickerSymbol, events);
+            return Task.FromResult(new MarketSubscribeAck(tickerSymbol, events));
         }
 
-        public override async Task<MarketUnsubscribeAck> Unsubscribe(string tickerSymbol, MarketEventType[] events, IActorRef subscriber)
+        public override Task<MarketUnsubscribeAck> Unsubscribe(string tickerSymbol, MarketEventType[] events, IActorRef subscriber)
         {
-            return new MarketUnsubscribeAck(tickerSymbol, events);
+            return Task.FromResult(new MarketUnsubscribeAck(tickerSymbol, events));
         }
     }
 }
