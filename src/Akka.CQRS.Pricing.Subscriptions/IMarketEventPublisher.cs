@@ -5,6 +5,6 @@
     /// </summary>
     public interface IMarketEventPublisher
     {
-        void Publish(string tickerSymbol, ITradeEvent @event);
+        void Publish(string tickerSymbol, IMarketEvent @event);
     }
 }

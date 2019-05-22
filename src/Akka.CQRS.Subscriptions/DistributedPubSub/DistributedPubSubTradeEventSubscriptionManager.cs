@@ -60,7 +60,7 @@ namespace Akka.CQRS.Subscriptions.DistributedPubSub
 
         internal static string[] ToTopics(string tickerSymbol, TradeEventType[] events)
         {
-            return events.Select(x => DistributedPubSubTopicFormatter.ToTopic(tickerSymbol, x)).ToArray();
+            return events.Select(x => DistributedPubSubTradeEventTopicFormatter.ToTopic(tickerSymbol, x)).ToArray();
         }
 
         public static DistributedPubSubTradeEventSubscriptionManager For(ActorSystem sys)

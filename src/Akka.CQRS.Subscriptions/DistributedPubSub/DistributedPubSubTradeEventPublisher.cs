@@ -4,7 +4,7 @@ using System.Xml;
 using Akka.Actor;
 using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Util;
-using static Akka.CQRS.Subscriptions.DistributedPubSub.DistributedPubSubTopicFormatter;
+using static Akka.CQRS.Subscriptions.DistributedPubSub.DistributedPubSubTradeEventTopicFormatter;
 
 namespace Akka.CQRS.Subscriptions.DistributedPubSub
 {

@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Akka.CQRS.Pricing.Subscriptions\Akka.CQRS.Pricing.Subscriptions.csproj" />
     <ProjectReference Include="..\Akka.CQRS.Pricing\Akka.CQRS.Pricing.csproj" />
     <ProjectReference Include="..\Akka.CQRS.Subscriptions\Akka.CQRS.Subscriptions.csproj" />
   </ItemGroup>

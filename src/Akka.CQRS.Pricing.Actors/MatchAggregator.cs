@@ -5,6 +5,8 @@ using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.CQRS.Events;
 using Akka.CQRS.Pricing.Commands;
 using Akka.CQRS.Pricing.Events;
+using Akka.CQRS.Pricing.Subscriptions;
+using Akka.CQRS.Pricing.Subscriptions.DistributedPubSub;
 using Akka.CQRS.Pricing.Views;
 using Akka.CQRS.Subscriptions;
 using Akka.CQRS.Subscriptions.DistributedPubSub;
@@ -55,8 +57,8 @@ namespace Akka.CQRS.Pricing.Actors
         public MatchAggregator(string tickerSymbol, IActorRef mediator, ITimestamper timestamper, ITradeEventSubscriptionManager subscriptionManager)
         {
             TickerSymbol = tickerSymbol;
-            _priceTopic = PriceTopicHelpers.PriceUpdateTopic(TickerSymbol);
-            _volumeTopic = PriceTopicHelpers.VolumeUpdateTopic(TickerSymbol);
+            _priceTopic = DistributedPubSubPriceTopicFormatter.PriceUpdateTopic(TickerSymbol);
+            _volumeTopic = DistributedPubSubPriceTopicFormatter.VolumeUpdateTopic(TickerSymbol);
             _mediator = mediator;
             _timestamper = timestamper;
             _subscriptionManager = subscriptionManager;
