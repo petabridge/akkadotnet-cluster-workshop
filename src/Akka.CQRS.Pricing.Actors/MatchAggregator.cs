@@ -29,16 +29,14 @@ namespace Akka.CQRS.Pricing.Actors
         public const int SnapshotEveryN = 10; 
 
         private MatchAggregate _matchAggregate;
-        private readonly IActorRef _mediator;
         private readonly ITimestamper _timestamper;
         private readonly ILoggingAdapter _log = Context.GetLogger();
-        private readonly ITradeEventSubscriptionManager _subscriptionManager;
+        private readonly IMarketEventPublisher _marketEventPublisher;
+        private readonly IMarketEventSubscriptionManager _marketEventSubscriptionManager;
+        private readonly ITradeEventSubscriptionManager _tradeSubscriptionManager;
         private CircularBuffer<IPriceUpdate> _priceUpdates = new CircularBuffer<IPriceUpdate>(MatchAggregate.DefaultSampleSize);
         private CircularBuffer<IVolumeUpdate> _volumeUpdates = new CircularBuffer<IVolumeUpdate>(MatchAggregate.DefaultSampleSize);
         private ICancelable _publishPricesTask;
-
-        private readonly string _priceTopic;
-        private readonly string _volumeTopic;
 
         public readonly string TickerSymbol;
         public override string PersistenceId { get; }
@@ -49,26 +47,31 @@ namespace Akka.CQRS.Pricing.Actors
             private PublishEvents() { }
         }
 
-        public MatchAggregator(string tickerSymbol)
-         : this(tickerSymbol, DistributedPubSub.Get(Context.System).Mediator, CurrentUtcTimestamper.Instance, new DistributedPubSubTradeEventSubscriptionManager(DistributedPubSub.Get(Context.System).Mediator))
+        private class DoSubscribe
         {
+            public static readonly DoSubscribe Instance = new DoSubscribe();
+            private DoSubscribe() { }
         }
 
-        public MatchAggregator(string tickerSymbol, IActorRef mediator, ITimestamper timestamper, ITradeEventSubscriptionManager subscriptionManager)
+        public MatchAggregator(string tickerSymbol) : this(tickerSymbol, DistributedPubSubTradeEventSubscriptionManager.For(Context.System), 
+            DistributedPubSubMarketEventSubscriptionManager.For(Context.System), DistributedPubSubMarketEventPublisher.For(Context.System))
+        { }
+
+        public MatchAggregator(string tickerSymbol, ITradeEventSubscriptionManager tradeSubscriptionManager, IMarketEventSubscriptionManager marketEventSubscriptionManager, IMarketEventPublisher marketEventPublisher, ITimestamper timestamper = null)
         {
             TickerSymbol = tickerSymbol;
-            _priceTopic = DistributedPubSubPriceTopicFormatter.PriceUpdateTopic(TickerSymbol);
-            _volumeTopic = DistributedPubSubPriceTopicFormatter.VolumeUpdateTopic(TickerSymbol);
-            _mediator = mediator;
-            _timestamper = timestamper;
-            _subscriptionManager = subscriptionManager;
+
+            _timestamper = timestamper ?? CurrentUtcTimestamper.Instance;
+            _tradeSubscriptionManager = tradeSubscriptionManager;
+            _marketEventSubscriptionManager = marketEventSubscriptionManager;
+            _marketEventPublisher = marketEventPublisher;
             PersistenceId = EntityIdHelper.IdForPricing(tickerSymbol);
             
-            Receives();
-            Commands();
+            Recovers();
+            AwaitingSubscription();
         }
 
-        private void Receives()
+        private void Recovers()
         {
             /*
              * Can be saved as a snapshot or as an event
@@ -92,6 +95,9 @@ namespace Akka.CQRS.Pricing.Actors
             _publishPricesTask = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(TimeSpan.FromSeconds(10),
                 TimeSpan.FromSeconds(10), Self, PublishEvents.Instance, ActorRefs.NoSender);
 
+            // setup subscription to TradeEventPublisher
+            Self.Tell(DoSubscribe.Instance);
+
             base.OnReplaySuccess();
         }
 
@@ -105,6 +111,23 @@ namespace Akka.CQRS.Pricing.Actors
         private MatchAggregatorSnapshot SaveAggregateData()
         {
             return new MatchAggregatorSnapshot(_matchAggregate.AvgPrice.CurrentAvg, _matchAggregate.AvgVolume.CurrentAvg, _priceUpdates.ToList(), _volumeUpdates.ToList());
+        }
+
+        private void AwaitingSubscription()
+        {
+            CommandAsync<DoSubscribe>(async _ =>
+            {
+                try
+                {
+                    var ack = await _tradeSubscriptionManager.Subscribe(TickerSymbol, TradeEventType.Match, Self);
+                    Become(Commands);
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ex, "Error while waiting for SubscribeAck for [{0}-{1}] - retrying in 5s.", TickerSymbol, TradeEventType.Match);
+                    Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(5), Self, DoSubscribe.Instance, ActorRefs.NoSender);
+                }
+            });
         }
 
         private void Commands()
@@ -167,8 +190,8 @@ namespace Akka.CQRS.Pricing.Actors
                 });
 
                 // publish updates to price and volume subscribers
-                _mediator.Tell(new Publish(_priceTopic, latestPrice));
-                _mediator.Tell(new Publish(_volumeTopic, latestVolume));
+                _marketEventPublisher.Publish(TickerSymbol, latestPrice);
+                _marketEventPublisher.Publish(TickerSymbol, latestVolume);
             });
 
             Command<Ping>(p =>
@@ -184,6 +207,51 @@ namespace Akka.CQRS.Pricing.Actors
                 // clean-up prior snapshots and journal events
                 DeleteSnapshots(new SnapshotSelectionCriteria(s.Metadata.SequenceNr-1));
                 DeleteMessages(s.Metadata.SequenceNr);
+            });
+
+            /*
+             * Handle subscriptions directly in case we're using in-memory, local pub-sub.
+             */
+            CommandAsync<MarketSubscribe>(async sub =>
+            {
+                try
+                {
+                    var ack = await _marketEventSubscriptionManager.Subscribe(TickerSymbol, sub.Events, sub.Subscriber);
+                    Context.Watch(sub.Subscriber);
+                    sub.Subscriber.Tell(ack);
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ex, "Error while processing subscription {0}", sub);
+                    sub.Subscriber.Tell(new MarketSubscribeNack(TickerSymbol, sub.Events, ex.Message));
+                }
+            });
+
+            CommandAsync<MarketUnsubscribe>(async unsub =>
+            {
+                try
+                {
+                    var ack = await _marketEventSubscriptionManager.Unsubscribe(PersistenceId, unsub.Events, unsub.Subscriber);
+                    // leave DeathWatch intact, in case actor is still subscribed to additional topics
+                    unsub.Subscriber.Tell(ack);
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ex, "Error while processing unsubscribe {0}", unsub);
+                    unsub.Subscriber.Tell(new MarketUnsubscribeNack(TickerSymbol, unsub.Events, ex.Message));
+                }
+            });
+
+            CommandAsync<Terminated>(async t =>
+            {
+                try
+                {
+                    var ack = await _marketEventSubscriptionManager.Unsubscribe(TickerSymbol, t.ActorRef);
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ex, "Error while processing unsubscribe for terminated subscriber {0} for symbol {1}", t.ActorRef, TickerSymbol);
+                }
             });
         }
 
