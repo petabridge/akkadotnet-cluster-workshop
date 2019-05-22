@@ -5,10 +5,11 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using Akka.Actor;
 using Akka.CQRS.Pricing.Commands;
 using Akka.CQRS.Pricing.Events;
-using Akka.CQRS.Pricing.Views;
+using Akka.CQRS.Pricing.Subscriptions;
 using Petabridge.Cmd;
 
 namespace Akka.CQRS.Pricing.Cli
@@ -36,31 +37,49 @@ namespace Akka.CQRS.Pricing.Cli
 
         private void WaitingForPriceHistory()
         {
-            Receive<PriceHistory>(p =>
+            Receive<PriceAndVolumeSnapshot>(p =>
             {
-                if (p.HistoricalPrices.IsEmpty)
+                if (p.PriceUpdates.Length == 0)
                 {
                     _commandHandlerActor.Tell(new CommandResponse($"No historical price data for [{_tickerSymbol}] - waiting for updates.", false));
-                    BecomePriceUpdates();
+                    BecomeWaitingForSubscribe();
                     return;
                 }
 
-                _currentPrice = p.CurrentPriceUpdate;
-                foreach (var e in p.HistoricalPrices)
+                _currentPrice = p.PriceUpdates.Last();
+                foreach (var e in p.PriceUpdates)
                 {
                     _commandHandlerActor.Tell(new CommandResponse(e.ToString(), false));
                 }
 
-                BecomePriceUpdates();
+                BecomeWaitingForSubscribe();
             });
 
             Receive<ReceiveTimeout>(t =>
             {
                 _commandHandlerActor.Tell(new CommandResponse($"No historical price data for [{_tickerSymbol}] - waiting for updates.", false));
-                BecomePriceUpdates();
+                BecomeWaitingForSubscribe();
             });
 
             ReceiveAny(_ => Stash.Stash());
+        }
+
+        private void BecomeWaitingForSubscribe()
+        {
+            _priceViewActor.Tell(new MarketSubscribe(_tickerSymbol, new[] { MarketEventType.PriceChange }, Self));
+            Become(WaitingForSubscribeAck);
+        }
+
+        private void WaitingForSubscribeAck()
+        {
+            Receive<MarketSubscribeAck>(ack => { BecomePriceUpdates(); });
+
+            Receive<ReceiveTimeout>(t =>
+            {
+                _commandHandlerActor.Tell(new CommandResponse($"Timed out while connecting to live price feed for [{_tickerSymbol}]. Retrying..."));
+                _priceViewActor.Tell(new MarketSubscribe(_tickerSymbol, new[] { MarketEventType.PriceChange }, Self));
+                BecomePriceUpdates();
+            });
         }
 
         private void BecomePriceUpdates()

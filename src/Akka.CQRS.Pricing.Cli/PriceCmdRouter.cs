@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.CQRS.Pricing.Commands;
 using Akka.CQRS.Pricing.Views;
+using Akka.Event;
 using Petabridge.Cmd;
 using Petabridge.Cmd.Host;
 
@@ -20,6 +21,7 @@ namespace Akka.CQRS.Pricing.Cli
     /// </summary>
     public sealed class PriceCmdRouter : CommandHandlerActor
     {
+        private readonly ILoggingAdapter _log = Context.GetLogger();
         private IActorRef _priceViewMaster;
 
         public PriceCmdRouter(IActorRef priceViewMaster) : base(PricingCmd.PricingCommandPalette)
@@ -38,14 +40,27 @@ namespace Akka.CQRS.Pricing.Cli
             Process(PricingCmd.PriceHistory.Name, (command, arguments) =>
             {
                 var tickerSymbol = arguments.ArgumentValues("symbol").Single();
-                var getPriceTask = _priceViewMaster.Ask<PriceHistory>(new GetPriceHistory(tickerSymbol), TimeSpan.FromSeconds(5));
+                var getPriceTask = _priceViewMaster.Ask<PriceAndVolumeSnapshot>(new FetchPriceAndVolume(tickerSymbol), TimeSpan.FromSeconds(5));
                 var sender = Sender;
 
                 // pipe happy results back to the sender only on successful Ask
                 getPriceTask.ContinueWith(tr =>
                 {
-                    return Enumerable.Select(tr.Result.HistoricalPrices, x => new CommandResponse(x.ToString(), false))
-                        .Concat(new []{ CommandResponse.Empty });
+                    _log.Info("Got price history back for {0}", tr.Result.StockId);
+                    try
+                    {
+                        if (tr.Result.PriceUpdates.Length == 0)
+                            return new[]
+                                {new CommandResponse($"No historical price data available for [{tr.Result.StockId}]")};
+                        return Enumerable.Select(tr.Result.PriceUpdates, x => new CommandResponse(x.ToString(), false))
+                            .Concat(new[] { CommandResponse.Empty });
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Error(ex, "Exception while returning price history for {0}", tickerSymbol);
+                        return new[] {CommandResponse.Empty};
+                    }
+                    
                 }, TaskContinuationOptions.OnlyOnRanToCompletion).PipeTo(sender);
 
                 // pipe unhappy results back to sender on failure

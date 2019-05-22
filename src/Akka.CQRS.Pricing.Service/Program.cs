@@ -48,15 +48,15 @@ namespace Akka.CQRS.Pricing.Service
 
             var actorSystem = ActorSystem.Create("AkkaTrader", conf.BootstrapFromDocker());
 
+            var sharding = ClusterSharding.Get(actorSystem);
+
+            var shardRegion = sharding.Start("priceAggregator",
+                s => Props.Create(() => new MatchAggregator(s)),
+                ClusterShardingSettings.Create(actorSystem),
+                new StockShardMsgRouter());
+
             Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
             {
-                var sharding = ClusterSharding.Get(actorSystem);
-
-                var shardRegion = sharding.Start("priceAggregator",
-                    s => Props.Create(() => new MatchAggregator(s)),
-                    ClusterShardingSettings.Create(actorSystem),
-                    new StockShardMsgRouter());
-
                 foreach (var ticker in AvailableTickerSymbols.Symbols)
                 {
                     shardRegion.Tell(new Ping(ticker));
@@ -81,7 +81,7 @@ namespace Akka.CQRS.Pricing.Service
             RegisterPalette(ClusterCommands.Instance);
             RegisterPalette(RemoteCommands.Instance);
             RegisterPalette(ClusterShardingCommands.Instance);
-            //RegisterPalette(new PriceCommands(priceViewMaster));
+            RegisterPalette(new PriceCommands(shardRegion));
             pbm.Start();
 
             actorSystem.WhenTerminated.Wait();

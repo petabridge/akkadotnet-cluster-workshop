@@ -40,5 +40,10 @@ namespace Akka.CQRS.Pricing.Events
             if (ReferenceEquals(null, other)) return 1;
             return Timestamp.CompareTo(other.Timestamp);
         }
+
+        public override string ToString()
+        {
+            return $"[{StockId}][{Timestamp}] - $[{CurrentVolume}]";
+        }
     }
 }
