@@ -4,6 +4,7 @@ using System.Linq;
 using Akka.Actor;
 using Akka.Bootstrap.Docker;
 using Akka.Cluster.Sharding;
+using Akka.Cluster.Tools.Client;
 using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Cluster.Tools.Singleton;
 using Akka.Configuration;
@@ -12,11 +13,6 @@ using Akka.CQRS.Infrastructure.Ops;
 using Akka.CQRS.Pricing.Actors;
 using Akka.CQRS.Pricing.Cli;
 using Akka.CQRS.Pricing.Commands;
-using Akka.CQRS.Pricing.Subscriptions.DistributedPubSub;
-using Akka.CQRS.Subscriptions.DistributedPubSub;
-using Akka.Persistence.MongoDb.Query;
-using Akka.Persistence.Query;
-using Akka.Util;
 using Petabridge.Cmd.Cluster;
 using Petabridge.Cmd.Cluster.Sharding;
 using Petabridge.Cmd.Host;
@@ -54,6 +50,12 @@ namespace Akka.CQRS.Pricing.Service
                 s => Props.Create(() => new MatchAggregator(s)),
                 ClusterShardingSettings.Create(actorSystem),
                 new StockShardMsgRouter());
+
+            var clientHandler =
+                actorSystem.ActorOf(Props.Create(() => new ClientHandlerActor(shardRegion)), "subscriptions");
+
+            // make ourselves available to ClusterClient at /user/subscriptions
+            ClusterClientReceptionist.Get(actorSystem).RegisterService(clientHandler);
 
             Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
             {
