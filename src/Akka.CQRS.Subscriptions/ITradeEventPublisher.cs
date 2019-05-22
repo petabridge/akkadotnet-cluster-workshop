@@ -4,6 +4,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Akka.CQRS.Pricing;
+
 namespace Akka.CQRS.Subscriptions
 {
     /// <summary>
@@ -12,5 +14,7 @@ namespace Akka.CQRS.Subscriptions
     public interface ITradeEventPublisher
     {
         void Publish(string tickerSymbol, ITradeEvent @event);
+
+        void Publish(string tickerSymbol, IMarketEvent @event);
     }
 }
