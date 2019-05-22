@@ -3,7 +3,7 @@
 
 
   <PropertyGroup>    
-    <TargetFramework>$(NetCoreVersion)</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <RuntimeFrameworkVersion>2.1.6</RuntimeFrameworkVersion>
   </PropertyGroup>
