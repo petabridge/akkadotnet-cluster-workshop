@@ -4,8 +4,6 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using Akka.CQRS.Pricing;
-
 namespace Akka.CQRS.Subscriptions
 {
     /// <summary>
