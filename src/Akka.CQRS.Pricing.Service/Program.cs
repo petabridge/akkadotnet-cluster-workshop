@@ -43,7 +43,7 @@ namespace Akka.CQRS.Pricing.Service
                 .WithFallback(ClusterSharding.DefaultConfig())
                 .WithFallback(DistributedPubSub.DefaultConfig());
 
-            var actorSystem = ActorSystem.Create("AkkaPricing", conf.BootstrapFromDocker());
+            var actorSystem = ActorSystem.Create("AkkaTrader", conf.BootstrapFromDocker());
             var readJournal = actorSystem.ReadJournalFor<MongoDbReadJournal>(MongoDbReadJournal.Identifier);
 
             Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
