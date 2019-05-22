@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\common.props" />
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Shared, non-domain-specific infrastructure used by various Akka.NET services.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Ops\ops.conf" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Ops\ops.conf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Akka.Cluster.Sharding" Version="$(AkkaVersion)-beta*" />
+    <PackageReference Include="Akka.Persistence.Extras" Version="$(AkkaPersistenceExtrasVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Akka.CQRS\Akka.CQRS.csproj" />
+  </ItemGroup>
+</Project>
