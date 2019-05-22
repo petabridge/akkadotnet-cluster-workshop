@@ -11,7 +11,6 @@ using Akka.CQRS.Subscriptions.NoOp;
 using Akka.Event;
 using Akka.Persistence;
 using Akka.Persistence.Extras;
-using Akka.Util.Internal;
 
 namespace Akka.CQRS.TradeProcessor.Actors
 {

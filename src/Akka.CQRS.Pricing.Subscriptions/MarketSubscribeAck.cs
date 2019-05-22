@@ -3,15 +3,15 @@
     /// <summary>
     /// Subscription to a specific ticker has been successful.
     /// </summary>
-    public sealed class MarketSubscribeAck
+    public sealed class MarketSubscribeAck : IWithStockId
     {
-        public MarketSubscribeAck(string tickerSymbol, MarketEventType[] events)
+        public MarketSubscribeAck(string stockId, MarketEventType[] events)
         {
-            TickerSymbol = tickerSymbol;
+            StockId = stockId;
             Events = events;
         }
 
-        public string TickerSymbol { get; }
+        public string StockId { get; }
 
         public MarketEventType[] Events { get; }
     }

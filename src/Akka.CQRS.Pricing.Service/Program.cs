@@ -44,7 +44,6 @@ namespace Akka.CQRS.Pricing.Service
                 .WithFallback(DistributedPubSub.DefaultConfig());
 
             var actorSystem = ActorSystem.Create("AkkaTrader", conf.BootstrapFromDocker());
-            var readJournal = actorSystem.ReadJournalFor<MongoDbReadJournal>(MongoDbReadJournal.Identifier);
 
             Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
             {
@@ -57,7 +56,7 @@ namespace Akka.CQRS.Pricing.Service
 
                 // used to seed pricing data
                 var singleton = ClusterSingletonManager.Props(
-                    Props.Create(() => new PriceInitiatorActor(readJournal, shardRegion)),
+                    Props.Create(() => new PriceInitiatorActor(shardRegion)),
                     ClusterSingletonManagerSettings.Create(
                         actorSystem.Settings.Config.GetConfig("akka.cluster.price-singleton")));
             });

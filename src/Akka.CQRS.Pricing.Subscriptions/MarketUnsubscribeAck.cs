@@ -3,15 +3,15 @@
     /// <summary>
     /// Unsubscription to a specific ticker has been successful.
     /// </summary>
-    public sealed class MarketUnsubscribeAck
+    public sealed class MarketUnsubscribeAck : IWithStockId
     {
-        public MarketUnsubscribeAck(string tickerSymbol, MarketEventType[] events)
+        public MarketUnsubscribeAck(string stockId, MarketEventType[] events)
         {
-            TickerSymbol = tickerSymbol;
+            StockId = stockId;
             Events = events;
         }
 
-        public string TickerSymbol { get; }
+        public string StockId { get; }
 
         public MarketEventType[] Events { get; }
     }

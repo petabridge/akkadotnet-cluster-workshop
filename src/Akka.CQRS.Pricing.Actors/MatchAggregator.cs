@@ -13,9 +13,6 @@ using Akka.CQRS.Subscriptions.DistributedPubSub;
 using Akka.CQRS.Util;
 using Akka.Event;
 using Akka.Persistence;
-using Akka.Persistence.Query;
-using Akka.Streams;
-using Akka.Streams.Dsl;
 using Petabridge.Collections;
 
 namespace Akka.CQRS.Pricing.Actors

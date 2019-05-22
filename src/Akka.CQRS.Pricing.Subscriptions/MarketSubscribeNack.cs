@@ -3,16 +3,16 @@
     /// <summary>
     /// Subscription to a specific ticker was not successful.
     /// </summary>
-    public sealed class MarketSubscribeNack
+    public sealed class MarketSubscribeNack : IWithStockId
     {
-        public MarketSubscribeNack(string tickerSymbol, MarketEventType[] events, string reason)
+        public MarketSubscribeNack(string stockId, MarketEventType[] events, string reason)
         {
-            TickerSymbol = tickerSymbol;
+            StockId = stockId;
             Events = events;
             Reason = reason;
         }
 
-        public string TickerSymbol { get; }
+        public string StockId { get; }
 
         public MarketEventType[] Events { get; }
 
