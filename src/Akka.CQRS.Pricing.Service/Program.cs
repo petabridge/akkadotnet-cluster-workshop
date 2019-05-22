@@ -44,6 +44,7 @@ namespace Akka.CQRS.Pricing.Service
                 .WithFallback(DistributedPubSub.DefaultConfig());
 
             var actorSystem = ActorSystem.Create("AkkaPricing", conf.BootstrapFromDocker());
+            var readJournal = actorSystem.ReadJournalFor<MongoDbReadJournal>(MongoDbReadJournal.Identifier);
 
             Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
             {
@@ -53,6 +54,12 @@ namespace Akka.CQRS.Pricing.Service
                     s => Props.Create(() => new MatchAggregator(s)),
                     ClusterShardingSettings.Create(actorSystem),
                     new StockShardMsgRouter());
+
+                // used to seed pricing data
+                var singleton = ClusterSingletonManager.Props(
+                    Props.Create(() => new PriceInitiatorActor(readJournal, shardRegion)),
+                    ClusterSingletonManagerSettings.Create(
+                        actorSystem.Settings.Config.GetConfig("akka.cluster.price-singleton")));
             });
 
             // start Petabridge.Cmd (for external monitoring / supervision)
