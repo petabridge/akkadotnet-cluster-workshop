@@ -1,6 +1,4 @@
-﻿using Akka.CQRS.Pricing;
-
-namespace Akka.CQRS.Subscriptions
+﻿namespace Akka.CQRS.Pricing.Subscriptions
 {
     /// <summary>
     /// Abstraction for publishing data about <see cref="IMarketEvent"/> instances.

@@ -9,7 +9,7 @@ namespace Akka.CQRS.Pricing
     /// of price, volume, or other "aggregated" events not specific to any individual
     /// trade or order.
     /// </summary>
-    public interface IMarketEvent
+    public interface IMarketEvent : IWithStockId
     {
     }
 }

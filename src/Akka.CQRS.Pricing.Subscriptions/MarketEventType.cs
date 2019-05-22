@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Akka.CQRS.Subscriptions
+﻿namespace Akka.CQRS.Pricing.Subscriptions
 {
     /// <summary>
     /// The type of market event we're interested in.
