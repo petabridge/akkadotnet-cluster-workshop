@@ -1,12 +1,10 @@
-﻿using Akka.CQRS.Pricing;
-
-namespace Akka.CQRS.Subscriptions
+﻿namespace Akka.CQRS.Pricing.Subscriptions
 {
     /// <summary>
     /// Abstraction for publishing data about <see cref="IMarketEvent"/> instances.
     /// </summary>
     public interface IMarketEventPublisher
     {
-        void Publish(string tickerSymbol, ITradeEvent @event);
+        void Publish(string tickerSymbol, IMarketEvent @event);
     }
 }

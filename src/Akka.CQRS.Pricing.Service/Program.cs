@@ -11,6 +11,9 @@ using Akka.CQRS.Infrastructure;
 using Akka.CQRS.Infrastructure.Ops;
 using Akka.CQRS.Pricing.Actors;
 using Akka.CQRS.Pricing.Cli;
+using Akka.CQRS.Pricing.Commands;
+using Akka.CQRS.Pricing.Subscriptions.DistributedPubSub;
+using Akka.CQRS.Subscriptions.DistributedPubSub;
 using Akka.Persistence.MongoDb.Query;
 using Akka.Persistence.Query;
 using Akka.Util;
@@ -43,7 +46,7 @@ namespace Akka.CQRS.Pricing.Service
                 .WithFallback(ClusterSharding.DefaultConfig())
                 .WithFallback(DistributedPubSub.DefaultConfig());
 
-            var actorSystem = ActorSystem.Create("AkkaPricing", conf.BootstrapFromDocker());
+            var actorSystem = ActorSystem.Create("AkkaTrader", conf.BootstrapFromDocker());
 
             Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
             {
@@ -53,6 +56,11 @@ namespace Akka.CQRS.Pricing.Service
                     s => Props.Create(() => new MatchAggregator(s)),
                     ClusterShardingSettings.Create(actorSystem),
                     new StockShardMsgRouter());
+
+                foreach (var ticker in AvailableTickerSymbols.Symbols)
+                {
+                    shardRegion.Tell(new Ping(ticker));
+                }
             });
 
             // start Petabridge.Cmd (for external monitoring / supervision)

@@ -4,10 +4,6 @@ using System.Text;
 using Akka.Actor;
 using Akka.CQRS.Pricing.Commands;
 using Akka.Event;
-using Akka.Persistence;
-using Akka.Persistence.Query;
-using Akka.Streams;
-using Akka.Streams.Dsl;
 
 namespace Akka.CQRS.Pricing.Actors
 {
@@ -18,7 +14,6 @@ namespace Akka.CQRS.Pricing.Actors
     public sealed class PriceInitiatorActor : ReceiveActor
     {
         private readonly ILoggingAdapter _log = Context.GetLogger();
-        private readonly IPersistenceIdsQuery _tradeIdsQuery;
         private readonly IActorRef _pricingQueryProxy;
         private readonly HashSet<string> _tickers = new HashSet<string>();
 
@@ -40,9 +35,8 @@ namespace Akka.CQRS.Pricing.Actors
             private Heartbeat() { }
         }
 
-        public PriceInitiatorActor(IPersistenceIdsQuery tradeIdsQuery, IActorRef pricingQueryProxy)
+        public PriceInitiatorActor(IActorRef pricingQueryProxy)
         {
-            _tradeIdsQuery = tradeIdsQuery;
             _pricingQueryProxy = pricingQueryProxy;
 
             Receive<Ping>(p =>
@@ -68,13 +62,11 @@ namespace Akka.CQRS.Pricing.Actors
 
         protected override void PreStart()
         {
-            var mat = Context.Materializer();
             var self = Self;
-            _tradeIdsQuery.PersistenceIds()
-                .Where(x => x.EndsWith(EntityIdHelper
-                    .OrderBookSuffix)) // skip persistence ids belonging to price entities
-                .Select(x => new Ping(EntityIdHelper.ExtractTickerFromPersistenceId(x)))
-                .RunWith(Sink.ActorRef<Ping>(self, UnexpectedEndOfStream.Instance), mat);
+            foreach (var t in AvailableTickerSymbols.Symbols)
+            {
+                self.Tell(new Ping(t));
+            }
 
             _heartbeatInterval = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(TimeSpan.FromSeconds(30),
                 TimeSpan.FromSeconds(30), Self, Heartbeat.Instance, ActorRefs.NoSender);
