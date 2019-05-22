@@ -11,6 +11,9 @@ using Akka.CQRS.Infrastructure;
 using Akka.CQRS.Infrastructure.Ops;
 using Akka.CQRS.Pricing.Actors;
 using Akka.CQRS.Pricing.Cli;
+using Akka.CQRS.Pricing.Commands;
+using Akka.CQRS.Pricing.Subscriptions.DistributedPubSub;
+using Akka.CQRS.Subscriptions.DistributedPubSub;
 using Akka.Persistence.MongoDb.Query;
 using Akka.Persistence.Query;
 using Akka.Util;
@@ -54,11 +57,10 @@ namespace Akka.CQRS.Pricing.Service
                     ClusterShardingSettings.Create(actorSystem),
                     new StockShardMsgRouter());
 
-                // used to seed pricing data
-                var singleton = ClusterSingletonManager.Props(
-                    Props.Create(() => new PriceInitiatorActor(shardRegion)),
-                    ClusterSingletonManagerSettings.Create(
-                        actorSystem.Settings.Config.GetConfig("akka.cluster.price-singleton")));
+                foreach (var ticker in AvailableTickerSymbols.Symbols)
+                {
+                    shardRegion.Tell(new Ping(ticker));
+                }
             });
 
             // start Petabridge.Cmd (for external monitoring / supervision)

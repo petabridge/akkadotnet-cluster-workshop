@@ -65,7 +65,7 @@ namespace Akka.CQRS.Pricing.Actors
             PersistenceId = EntityIdHelper.IdForPricing(tickerSymbol);
             
             Recovers();
-            AwaitingSubscription();
+            Commands();
         }
 
         private void Recovers()
@@ -117,7 +117,8 @@ namespace Akka.CQRS.Pricing.Actors
                 try
                 {
                     var ack = await _tradeSubscriptionManager.Subscribe(TickerSymbol, TradeEventType.Match, Self);
-                    Become(Commands);
+                    _log.Info("Successfully subscribed to MATCH events for {0}", TickerSymbol);
+                    //Become(Commands);
                 }
                 catch (Exception ex)
                 {
@@ -129,8 +130,10 @@ namespace Akka.CQRS.Pricing.Actors
 
         private void Commands()
         {
+            AwaitingSubscription();
             Command<Match>(m => TickerSymbol.Equals(m.StockId), m =>
             {
+                _log.Info("Received MATCH for {0} - price: {1} quantity: {2}", TickerSymbol, m.SettlementPrice, m.Quantity);
                 if (_matchAggregate == null)
                 {
                     _matchAggregate = new MatchAggregate(TickerSymbol, m.SettlementPrice, m.Quantity);
@@ -250,6 +253,12 @@ namespace Akka.CQRS.Pricing.Actors
                     _log.Error(ex, "Error while processing unsubscribe for terminated subscriber {0} for symbol {1}", t.ActorRef, TickerSymbol);
                 }
             });
+        }
+
+        protected override void PreStart()
+        {
+            _log.Info("Starting...");
+            base.PreStart();
         }
 
         protected override void PostStop()
