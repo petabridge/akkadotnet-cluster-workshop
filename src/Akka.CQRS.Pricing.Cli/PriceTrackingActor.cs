@@ -106,10 +106,10 @@ namespace Akka.CQRS.Pricing.Cli
 
         protected override void PreStart()
         {
-            var getlatestPrice = new GetLatestPrice(_tickerSymbol);
+            var getlatestPrice = new FetchPriceAndVolume(_tickerSymbol);
 
             // get the historical price
-            _priceViewActor.Tell(new GetPriceHistory(_tickerSymbol));
+            _priceViewActor.Tell(getlatestPrice);
             _priceCheckInterval = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(TimeSpan.FromSeconds(3),
                 TimeSpan.FromSeconds(3), _priceViewActor, getlatestPrice, Self);
 

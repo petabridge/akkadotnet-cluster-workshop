@@ -46,28 +46,26 @@ namespace Akka.CQRS.Pricing.Cli
                 // pipe happy results back to the sender only on successful Ask
                 getPriceTask.ContinueWith(tr =>
                 {
-                    _log.Info("Got price history back for {0}", tr.Result.StockId);
                     try
                     {
                         if (tr.Result.PriceUpdates.Length == 0)
                             return new[]
                                 {new CommandResponse($"No historical price data available for [{tr.Result.StockId}]")};
+
                         return Enumerable.Select(tr.Result.PriceUpdates, x => new CommandResponse(x.ToString(), false))
-                            .Concat(new[] { CommandResponse.Empty });
+                            .Concat(new[] {CommandResponse.Empty});
                     }
                     catch (Exception ex)
                     {
                         _log.Error(ex, "Exception while returning price history for {0}", tickerSymbol);
                         return new[] {CommandResponse.Empty};
                     }
-                    
-                }, TaskContinuationOptions.OnlyOnRanToCompletion).PipeTo(sender);
 
-                // pipe unhappy results back to sender on failure
-                getPriceTask.ContinueWith(tr => 
-                        new ErroredCommandResponse($"Error while fetching price history for {tickerSymbol} - " +
-                                                   $"timed out after 5s"), TaskContinuationOptions.NotOnRanToCompletion)
-                    .PipeTo(sender); ;
+                }).ContinueWith(tr =>
+                {
+                    foreach(var r in tr.Result)
+                        sender.Tell(r, ActorRefs.NoSender);
+                });
             });
         }
     }
