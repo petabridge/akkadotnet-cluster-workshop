@@ -43,7 +43,7 @@ namespace Akka.CQRS.Pricing.Events
 
         public override string ToString()
         {
-            return $"[{StockId}][{Timestamp}] - $[{CurrentVolume}]";
+            return $"[{StockId}][{Timestamp}] - [{CurrentVolume}] avg shares / trade";
         }
     }
 }
