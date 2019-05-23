@@ -133,14 +133,14 @@ namespace Akka.CQRS.TradeProcessor.Actors
                 {
                     try
                     {
-                        var ack = await _subscriptionManager.Subscribe(sub.TickerSymbol, sub.Events, sub.Subscriber);
+                        var ack = await _subscriptionManager.Subscribe(sub.StockId, sub.Events, sub.Subscriber);
                         Context.Watch(sub.Subscriber);
                         sub.Subscriber.Tell(ack);
                     }
                     catch (Exception ex)
                     {
                         _log.Error(ex, "Error while processing subscription {0}", sub);
-                        sub.Subscriber.Tell(new TradeSubscribeNack(sub.TickerSymbol, sub.Events, ex.Message));
+                        sub.Subscriber.Tell(new TradeSubscribeNack(sub.StockId, sub.Events, ex.Message));
                     }
                 });
 
@@ -148,14 +148,14 @@ namespace Akka.CQRS.TradeProcessor.Actors
             {
                 try
                 {
-                    var ack = await _subscriptionManager.Unsubscribe(unsub.TickerSymbol, unsub.Events, unsub.Subscriber);
+                    var ack = await _subscriptionManager.Unsubscribe(unsub.StockId, unsub.Events, unsub.Subscriber);
                     // leave DeathWatch intact, in case actor is still subscribed to additional topics
                     unsub.Subscriber.Tell(ack);
                 }
                 catch (Exception ex)
                 {
                     _log.Error(ex, "Error while processing unsubscribe {0}", unsub);
-                    unsub.Subscriber.Tell(new TradeUnsubscribeNack(unsub.TickerSymbol, unsub.Events, ex.Message));
+                    unsub.Subscriber.Tell(new TradeUnsubscribeNack(unsub.StockId, unsub.Events, ex.Message));
                 }
             });
 

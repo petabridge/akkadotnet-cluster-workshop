@@ -5,16 +5,16 @@ namespace Akka.CQRS.Subscriptions
     /// <summary>
     /// Unsubscribe to trade events for the specified ticker symbol.
     /// </summary>
-    public sealed class TradeUnsubscribe
+    public sealed class TradeUnsubscribe : IWithStockId
     {
-        public TradeUnsubscribe(string tickerSymbol, TradeEventType[] events, IActorRef subscriber)
+        public TradeUnsubscribe(string stockId, TradeEventType[] events, IActorRef subscriber)
         {
-            TickerSymbol = tickerSymbol;
+            StockId = stockId;
             Events = events;
             Subscriber = subscriber;
         }
 
-        public string TickerSymbol { get; }
+        public string StockId { get; }
 
         public TradeEventType[] Events { get; }
 
