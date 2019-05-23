@@ -22,4 +22,4 @@ jobs:
     name: Windows
     vmImage: 'vs2017-win2016'
     scriptFileName: build.cmd
-    scriptArgs: "all phobos customNuGetSource=$(phobosNuGet)"
+    scriptArgs: 'all phobos customNuGetSource=$(phobosNuGet)'
