@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <Import Project="..\common.props" />
+  <PropertyGroup>
+    <TargetFramework>$(NetCoreVersion)</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="app.conf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+    <PackageReference Include="Akka.Bootstrap.Docker" Version="$(AkkaBootstrapVersion)" />
+    <PackageReference Include="Akka.Cluster.Tools" Version="$(AkkaVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Akka.CQRS.Pricing.Subscriptions\Akka.CQRS.Pricing.Subscriptions.csproj" />
+  </ItemGroup>
+
+</Project>

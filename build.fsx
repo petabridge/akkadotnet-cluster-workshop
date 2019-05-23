@@ -234,7 +234,8 @@ Target "PublishNuget" (fun _ ->
 // Docker images
 //--------------------------------------------------------------------------------  
 Target "PublishCode" (fun _ ->    
-    let projects = !! "src/**/*.Service.csproj" // publish services only
+    let projects = !! "src/**/*.Service.csproj" // publish services  and web only
+                      ++ "src/**/*.Web.csproj"
 
     let runSingleProject project =
         DotNetCli.Publish
@@ -253,6 +254,7 @@ let mapDockerImageName (projectName:string) =
     | "Akka.CQRS.TradeProcessor.Service" -> Some("akka.cqrs.tradeprocessor")
     | "Akka.CQRS.TradePlacers.Service" -> Some("akka.cqrs.traders")
     | "Akka.CQRS.Pricing.Service" -> Some("akka.cqrs.pricing")
+    | "Akka.CQRS.Pricing.Web" -> Some("akka.cqrs.pricing.web")
     | _ -> None
 
 Target "BuildDockerImages" (fun _ ->
