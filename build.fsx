@@ -295,7 +295,7 @@ Target "PublishCode" (fun _ ->
                     Project = project
                     Configuration = configuration
                     VersionSuffix = overrideVersionSuffix project
-                    AdditionalArgs = "--no-restore"
+                    AdditionalArgs = ["--no-restore"]
                     })
 
     projects |> Seq.iter (runSingleProject)
