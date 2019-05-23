@@ -91,6 +91,8 @@ namespace Akka.CQRS.Infrastructure
                 var config = ConfigurationFactory.ParseString(@"""Phobos.Actor.Remote.PhobosRemoteActorRefProvider, Phobos.Actor.Remote""");
                 return config.WithFallback(phobosConfig).WithFallback(c);
             }
+
+            return phobosConfig;
         }
 
 #endif
