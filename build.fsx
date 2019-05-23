@@ -54,18 +54,27 @@ Target "AssemblyInfo" (fun _ ->
     XmlPokeInnerText "./src/common.props" "//Project/PropertyGroup/PackageReleaseNotes" (releaseNotes.Notes |> String.concat "\n")
 )
 
-Target "Build" (fun _ ->      
+Target "RestorePackages" (fun _ ->
     let customSource = getBuildParamOrDefault "customNuGetSource" ""
 
     if(hasBuildParam "customNuGetSource") then
-        DotNetCli.Build
+        DotNetCli.Restore
             (fun p -> 
                 { p with
                     Project = solutionFile
-                    Configuration = configuration
+                    NoCache = false
                     AdditionalArgs = [sprintf "-s %s -s https://api.nuget.org/v3/index.json" customSource]})
     else
-        DotNetCli.Build
+        DotNetCli.Restore
+            (fun p -> 
+                { p with
+                    Project = solutionFile
+                    NoCache = false })
+)
+
+
+Target "Build" (fun _ ->      
+       DotNetCli.Build
             (fun p -> 
                 { p with
                     Project = solutionFile
@@ -280,25 +289,14 @@ Target "PublishCode" (fun _ ->
                       ++ "src/**/*.Web.csproj"
 
     let runSingleProject project =
-        let customSource = getBuildParamOrDefault "customNuGetSource" ""
-
-        if(hasBuildParam "customNuGetSource") then
-            DotNetCli.Publish
-                (fun p -> 
-                    { p with
-                        Project = project
-                        Configuration = configuration
-                        VersionSuffix = overrideVersionSuffix project
-                        AdditionalArgs = [sprintf "-s %s -s https://api.nuget.org/v3/index.json" customSource]
-                        })
-        else
-            DotNetCli.Publish
-                (fun p -> 
-                    { p with
-                        Project = project
-                        Configuration = configuration
-                        VersionSuffix = overrideVersionSuffix project
-                        })
+        DotNetCli.Publish
+            (fun p -> 
+                { p with
+                    Project = project
+                    Configuration = configuration
+                    VersionSuffix = overrideVersionSuffix project
+                    AdditionalArgs = "--no-restore"
+                    })
 
     projects |> Seq.iter (runSingleProject)
 )
@@ -420,7 +418,7 @@ Target "Docker" DoNothing
 Target "Nuget" DoNothing
 
 // build dependencies
-"Clean" ==> "AssemblyInfo" ==> "Build" ==> "BuildRelease"
+"Clean" ==> "AssemblyInfo" ==> "RestorePackages" ==> "Build" ==> "BuildRelease"
 
 // tests dependencies
 "Build" ==> "RunTests"
@@ -439,6 +437,6 @@ Target "Nuget" DoNothing
 "BuildRelease" ==> "All"
 "RunTests" ==> "All"
 "NBench" ==> "All"
-"Nuget" ==> "All"
+"Docker" ==> "All"
 
 RunTargetOrDefault "Help"
