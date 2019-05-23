@@ -88,7 +88,10 @@ namespace Akka.CQRS
 
         public bool Equals(Order other)
         {
-            return string.Equals(OrderId, other.OrderId);
+            return string.Equals(OrderId, other.OrderId) && string.Equals(StockId, other.StockId) 
+                                                         && Side == other.Side 
+                                                         && OriginalQuantity.Equals(other.OriginalQuantity)
+                                                         && Price == other.Price && Fills.ToImmutableHashSet().SetEquals(other.Fills);
         }
 
         public override bool Equals(object obj)
@@ -99,17 +102,16 @@ namespace Akka.CQRS
 
         public override int GetHashCode()
         {
-            return OrderId.GetHashCode();
-        }
-
-        public static bool operator ==(Order left, Order right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(Order left, Order right)
-        {
-            return !left.Equals(right);
+            unchecked
+            {
+                var hashCode = OrderId.GetHashCode();
+                hashCode = (hashCode * 397) ^ StockId.GetHashCode();
+                hashCode = (hashCode * 397) ^ (int) Side;
+                hashCode = (hashCode * 397) ^ OriginalQuantity.GetHashCode();
+                hashCode = (hashCode * 397) ^ Price.GetHashCode();
+                hashCode = (hashCode * 397) ^ Fills.GetHashCode();
+                return hashCode;
+            }
         }
 
         public int CompareTo(Order other)
@@ -142,5 +144,7 @@ namespace Akka.CQRS
         {
             return left.CompareTo(right) >= 0;
         }
+
+
     }
 }

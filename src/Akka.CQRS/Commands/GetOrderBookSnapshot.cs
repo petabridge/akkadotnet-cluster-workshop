@@ -24,16 +24,13 @@ namespace Akka.CQRS.Commands
     /// <summary>
     /// Query the current order book snapshot
     /// </summary>
-    public class GetOrderBookSnapshot : IWithStockId
+    public class GetOrderBookSnapshot : IWithStockId, ITradeEvent
     {
-        public GetOrderBookSnapshot(string stockId, DetailLevel detail = DetailLevel.Summary)
+        public GetOrderBookSnapshot(string stockId)
         {
             StockId = stockId;
-            Detail = detail;
         }
 
         public string StockId { get; }
-
-        public DetailLevel Detail { get; }
     }
 }

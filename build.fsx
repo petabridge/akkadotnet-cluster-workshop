@@ -129,6 +129,38 @@ Target "NBench" <| fun _ ->
     
     projects |> Seq.iter runSingleProject
 
+//--------------------------------------------------------------------------------
+// Serialization
+//--------------------------------------------------------------------------------
+Target "Protobuf" <| fun _ ->
+
+    let protocPath =
+        if isWindows then findToolInSubPath "protoc.exe" "tools/Google.Protobuf.Tools/tools/windows_x64"
+        elif isMacOS then findToolInSubPath "protoc" "tools/Google.Protobuf.Tools/tools/macosx_x64"
+        else findToolInSubPath "protoc" "tools/Google.Protobuf.Tools/tools/linux_x64"
+
+    let protoFiles = [
+        ("Akka.Cqrs.proto", "/src/Akka.CQRS/Serialization/Proto/")
+        ("Akka.Cqrs.Pricing.proto", "/src/Akka.CQRS.Pricing/Serialization/Proto") ]
+
+    printfn "Using proto.exe: %s" protocPath
+
+    let runProtobuf assembly =
+        let protoName, destinationPath = assembly
+        let args = StringBuilder()
+                |> append (sprintf "-I=%s" (__SOURCE_DIRECTORY__ @@ "/src/protobuf/") )
+                |> append (sprintf "--csharp_out=internal_access:%s" (__SOURCE_DIRECTORY__ @@ destinationPath))
+                |> append "--csharp_opt=file_extension=.g.cs"
+                |> append (__SOURCE_DIRECTORY__ @@ "/src/protobuf" @@ protoName)
+                |> toText
+
+        let result = ExecProcess(fun info -> 
+            info.FileName <- protocPath
+            info.WorkingDirectory <- (Path.GetDirectoryName (FullName protocPath))
+            info.Arguments <- args) (System.TimeSpan.FromMinutes 45.0) (* Reasonably long-running task. *)
+        if result <> 0 then failwithf "protoc failed. %s %s" protocPath args
+    
+    protoFiles |> Seq.iter (runProtobuf)
 
 //--------------------------------------------------------------------------------
 // Code signing targets

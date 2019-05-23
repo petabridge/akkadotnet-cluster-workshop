@@ -17,7 +17,7 @@ namespace Akka.CQRS
     /// <summary>
     /// The full state of the current order book for a given <see cref="IWithStockId"/>.
     /// </summary>
-    public sealed class OrderbookSnapshot : IWithStockId
+    public sealed class OrderbookSnapshot : IWithStockId, ITradeEvent
     {
         public OrderbookSnapshot(string stockId, DateTimeOffset timestamp, double askQuantity, double bidQuantity, IReadOnlyCollection<Order> asks, IReadOnlyCollection<Order> bids)
         {
