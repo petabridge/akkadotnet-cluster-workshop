@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using Akka.Actor;
+using Akka.Configuration;
 using Akka.CQRS.Commands;
 using Akka.CQRS.Events;
 using Akka.Serialization;
@@ -16,9 +17,19 @@ namespace Akka.CQRS.Serialization
     {
         public static readonly IEnumerable<Order> EmptyOrders = new Order[0];
 
+        public static Config Config { get; }
+
+        static TradeEventSerializer()
+        {
+            Config = ConfigurationFactory.FromResource<TradeEventSerializer>(
+                "Akka.CQRS.Serialization.TradeEventSerializer.conf");
+        }
+
         public TradeEventSerializer(ExtendedActorSystem system) : base(system)
         {
         }
+
+        public override int Identifier => 517;
 
         public override byte[] ToBinary(object obj)
         {
