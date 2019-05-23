@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Akka.CQRS.Pricing.Web.Hubs;
+using Akka.CQRS.Pricing.Web.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +33,7 @@ namespace Akka.CQRS.Pricing.Web
 
             services.AddMvc();
             services.AddSignalR();
+            services.AddSingleton<StockBootstrap, StockBootstrap>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +57,8 @@ namespace Akka.CQRS.Pricing.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            app.UseSignalR(builder => { builder.MapHub<StockHub>("/hubs/stockHub"); });
         }
     }
 }
