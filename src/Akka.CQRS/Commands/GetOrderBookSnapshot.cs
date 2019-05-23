@@ -26,14 +26,11 @@ namespace Akka.CQRS.Commands
     /// </summary>
     public class GetOrderBookSnapshot : IWithStockId
     {
-        public GetOrderBookSnapshot(string stockId, DetailLevel detail = DetailLevel.Summary)
+        public GetOrderBookSnapshot(string stockId)
         {
             StockId = stockId;
-            Detail = detail;
         }
 
         public string StockId { get; }
-
-        public DetailLevel Detail { get; }
     }
 }
