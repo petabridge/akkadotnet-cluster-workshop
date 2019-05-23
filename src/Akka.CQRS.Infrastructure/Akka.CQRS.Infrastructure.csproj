@@ -5,9 +5,13 @@
     <Description>Shared, non-domain-specific infrastructure used by various Akka.CQRS services.</Description>
     <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Ops\phobos.conf" />
+  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Ops\ops.conf" />
+    <EmbeddedResource Include="Ops\phobos.conf" />
   </ItemGroup>
 
   <ItemGroup>

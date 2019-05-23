@@ -1,4 +1,5 @@
 ﻿using System;
+using Akka.Actor;
 using Akka.Bootstrap.Docker;
 using Akka.Cluster.Sharding;
 using Akka.Cluster.Tools.Client;
@@ -7,6 +8,10 @@ using Akka.Configuration;
 using Akka.CQRS.Infrastructure.Ops;
 using Akka.CQRS.Serialization;
 using static Akka.CQRS.Infrastructure.MongoDbHoconHelper;
+using static Akka.CQRS.Infrastructure.Ops.OpsConfig;
+#if PHOBOS
+using Phobos.Actor;
+#endif
 
 namespace Akka.CQRS.Infrastructure
 {
@@ -36,7 +41,7 @@ namespace Akka.CQRS.Infrastructure
             }
 
             config = config
-                .WithFallback(OpsConfig.GetOpsConfig())
+                .WithFallback(GetOpsConfig())
                 .WithFallback(TradeEventSerializer.Config)
                 .WithFallback(ClusterSharding.DefaultConfig())
                 .WithFallback(ClusterClientReceptionist.DefaultConfig())
@@ -48,8 +53,47 @@ namespace Akka.CQRS.Infrastructure
                 return ConfigurationFactory.ParseString("akka.actor.provider = remote").WithFallback(config);
             }
 
+#if PHOBOS
+            return config.BootstrapPhobos(appConfig);
+#endif
+
             return config;
         }
+
+#if PHOBOS
+        /// <summary>
+        ///     Name of the <see cref="Environment" /> variable used to direct Phobos' StatsD
+        ///     output.
+        /// </summary>
+        public const string STATSD_URL = "STATSD_URL";
+
+        /// <summary>
+        ///     Name of the <see cref="Environment" /> variable used to direct Phobos' StatsD
+        ///     output.
+        /// </summary>
+        public const string STATSD_PORT = "STATSD_PORT";
+
+        public static Config BootstrapPhobos(this Config c, AppBootstrapConfig appConfig)
+        {
+            var phobosConfig = GetPhobosConfig();
+
+            var statsdUrl = Environment.GetEnvironmentVariable(STATSD_URL);
+            var statsDPort = Environment.GetEnvironmentVariable(STATSD_PORT);
+
+            if (!string.IsNullOrEmpty(statsdUrl) && int.TryParse(statsDPort, out var portNum))
+                phobosConfig = ConfigurationFactory.ParseString($"phobos.monitoring.statsd.endpoint=\"{statsdUrl}\"" +
+                                                                Environment.NewLine +
+                                                                $"phobos.monitoring.statsd.port={portNum}")
+                    .WithFallback(phobosConfig);
+
+            if (!appConfig.NeedClustering)
+            {
+                var config = ConfigurationFactory.ParseString(@"""Phobos.Actor.Remote.PhobosRemoteActorRefProvider, Phobos.Actor.Remote""");
+                return config.WithFallback(phobosConfig).WithFallback(c);
+            }
+        }
+
+#endif
     }
 
     public sealed class AppBootstrapConfig

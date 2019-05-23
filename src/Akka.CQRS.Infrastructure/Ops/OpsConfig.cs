@@ -12,5 +12,11 @@ namespace Akka.CQRS.Infrastructure.Ops
         {
             return ConfigurationFactory.FromResource<OpsConfig>("Akka.CQRS.Infrastructure.Ops.ops.conf");
         }
+
+#if PHOBOS
+        public static Akka.Configuration.Config GetPhobosConfig(){
+            return ConfigurationFactory.FromResource<OpsConfig>("Akka.CQRS.Infrastructure.Ops.phobos.conf");
+        }
+#endif
     }
 }
