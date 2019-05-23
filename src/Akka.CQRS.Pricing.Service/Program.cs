@@ -40,6 +40,7 @@ namespace Akka.CQRS.Pricing.Service
             var conf = ConfigurationFactory.ParseString(config).WithFallback(GetMongoHocon(mongoConnectionString))
                 .WithFallback(OpsConfig.GetOpsConfig())
                 .WithFallback(ClusterSharding.DefaultConfig())
+                .WithFallback(ClusterClientReceptionist.DefaultConfig())
                 .WithFallback(DistributedPubSub.DefaultConfig());
 
             var actorSystem = ActorSystem.Create("AkkaTrader", conf.BootstrapFromDocker());

@@ -3,6 +3,14 @@
   <PropertyGroup>
     <TargetFramework>$(NetCoreVersion)</TargetFramework>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="app.conf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="app.conf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" />
