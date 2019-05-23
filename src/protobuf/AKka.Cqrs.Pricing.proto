@@ -1,0 +1,36 @@
+syntax = "proto3";
+package Akka.CQRS.Pricing.Serialization.Msgs;
+
+message PriceChanged{
+	string stockId = 1;
+	double currentAvgPrice = 2; /* normally a decimal in C# - might have loss of precision here */
+	int64 timeIssued = 3;	
+}
+
+message VolumeChanged{
+	string stockId = 1;
+	double currentAvgVolume = 2;
+	int64 timeIssued = 3;	
+}
+
+message FetchPriceAndVolume{
+	string stockId = 1;
+}
+
+message Ping{
+	string stockId = 1;
+}
+
+message PriceAndVolumeSnapshot{
+	string stockId = 1;
+	repeated PriceChanged priceUpdates = 2;
+	repeated VolumeChanged volumeUpdates = 3;
+}
+
+message MatchAggregatorSnapshot{
+	double avgPrice = 1;
+	double avgVolume = 2;
+	repeated PriceChanged priceUpdates = 3;
+	repeated VolumeChanged volumeUpdates = 4;
+}
+

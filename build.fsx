@@ -140,7 +140,8 @@ Target "Protobuf" <| fun _ ->
         else findToolInSubPath "protoc" "tools/Google.Protobuf.Tools/tools/linux_x64"
 
     let protoFiles = [
-        ("Akka.Cqrs.proto", "/src/Akka.CQRS/Serialization/Proto/") ]
+        ("Akka.Cqrs.proto", "/src/Akka.CQRS/Serialization/Proto/")
+        ("Akka.Cqrs.Pricing.proto", "/src/Akka.CQRS.Pricing/Serialization/Proto") ]
 
     printfn "Using proto.exe: %s" protocPath
 
