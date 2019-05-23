@@ -94,7 +94,7 @@ namespace Akka.CQRS.Serialization
                 case Fill f:
                     return "F";
                 case Match m:
-                    return "m";
+                    return "M";
                 case OrderbookSnapshot snap:
                     return "OBS";
                 case GetOrderBookSnapshot go:
@@ -270,7 +270,7 @@ namespace Akka.CQRS.Serialization
         internal static Fill FromProto(Msgs.Fill f)
         {
             return new Fill(f.OrderId, f.StockId, f.Quantity, (decimal)f.Price, f.FilledById,
-                DateTimeOffset.FromUnixTimeMilliseconds(f.TimeIssued));
+                DateTimeOffset.FromUnixTimeMilliseconds(f.TimeIssued), f.PartialFill);
         }
 
         internal static Msgs.Fill ToProto(Fill f)
