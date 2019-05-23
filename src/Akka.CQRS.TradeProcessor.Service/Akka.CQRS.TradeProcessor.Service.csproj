@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>$(NetCoreVersion)</TargetFramework>
+    <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="app.conf">
