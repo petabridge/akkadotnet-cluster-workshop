@@ -27,4 +27,10 @@
     <NetCoreVersion>netcoreapp2.1</NetCoreVersion>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Phobos'">
+    <PhobosVersion>0.6.0</PhobosVersion>
+    <PhobosTracingVersion>0.5.1</PhobosTracingVersion>
+    <PhobosMonitoringVersion>0.7.0</PhobosMonitoringVersion>
+    <DefineConstants>$(DefineConstants);RELEASE;PHOBOS</DefineConstants>
+  </PropertyGroup>
 </Project>

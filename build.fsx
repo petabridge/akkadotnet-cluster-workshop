@@ -11,7 +11,7 @@ open Fake.DocFxHelper
 
 // Information about the project for Nuget and Assembly info files
 let product = "Akka.CQRS"
-let configuration = "Release"
+let configuration = if hasBuildParam "phobos" then "Phobos" else "Release"
 
 // Metadata used when signing packages and DLLs
 let signingName = "My Library"
