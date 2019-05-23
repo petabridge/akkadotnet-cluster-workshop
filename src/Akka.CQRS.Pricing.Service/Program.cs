@@ -25,25 +25,10 @@ namespace Akka.CQRS.Pricing.Service
     {
         static int Main(string[] args)
         {
-            var mongoConnectionString = Environment.GetEnvironmentVariable("MONGO_CONNECTION_STR")?.Trim();
-            if (string.IsNullOrEmpty(mongoConnectionString))
-            {
-                Console.WriteLine("ERROR! MongoDb connection string not provided. Can't start.");
-                return -1;
-            }
-            else
-            {
-                Console.WriteLine("Connecting to MongoDb at {0}", mongoConnectionString);
-            }
-
             var config = File.ReadAllText("app.conf");
-            var conf = ConfigurationFactory.ParseString(config).WithFallback(GetMongoHocon(mongoConnectionString))
-                .WithFallback(OpsConfig.GetOpsConfig())
-                .WithFallback(ClusterSharding.DefaultConfig())
-                .WithFallback(ClusterClientReceptionist.DefaultConfig())
-                .WithFallback(DistributedPubSub.DefaultConfig());
+            var conf = ConfigurationFactory.ParseString(config);
 
-            var actorSystem = ActorSystem.Create("AkkaTrader", conf.BootstrapFromDocker());
+            var actorSystem = ActorSystem.Create("AkkaTrader", conf.BoostrapApplication(new AppBootstrapConfig(true, true)));
 
             var sharding = ClusterSharding.Get(actorSystem);
 

@@ -21,6 +21,7 @@
     <AkkaPersistenceExtrasVersion>0.4.2</AkkaPersistenceExtrasVersion>
     <FluentAssertionsVersion>5.6.0</FluentAssertionsVersion>
     <GoogleProtobufVersion>3.4.0</GoogleProtobufVersion>
+    <PetabridgeCmdVersion>0.6.0</PetabridgeCmdVersion>
   </PropertyGroup>
   <PropertyGroup>
     <NetCoreVersion>netcoreapp2.1</NetCoreVersion>

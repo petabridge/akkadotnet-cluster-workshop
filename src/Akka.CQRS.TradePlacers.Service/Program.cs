@@ -22,12 +22,9 @@ namespace Akka.CQRS.TradePlacers.Service
         static int Main(string[] args)
         {
             var config = File.ReadAllText("app.conf");
-            var conf = ConfigurationFactory.ParseString(config)
-                .WithFallback(OpsConfig.GetOpsConfig())
-                .WithFallback(ClusterSharding.DefaultConfig())
-                .WithFallback(DistributedPubSub.DefaultConfig());
+            var conf = ConfigurationFactory.ParseString(config).BoostrapApplication(new AppBootstrapConfig(false, true));
 
-            var actorSystem = ActorSystem.Create("AkkaTrader", conf.BootstrapFromDocker());
+            var actorSystem = ActorSystem.Create("AkkaTrader", conf);
 
             Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
             {
