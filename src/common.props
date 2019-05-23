@@ -20,6 +20,7 @@
     <AkkaBootstrapVersion>0.2.1</AkkaBootstrapVersion>
     <AkkaPersistenceExtrasVersion>0.4.2</AkkaPersistenceExtrasVersion>
     <FluentAssertionsVersion>5.6.0</FluentAssertionsVersion>
+    <GoogleProtobufVersion>3.4.0</GoogleProtobufVersion>
   </PropertyGroup>
   <PropertyGroup>
     <NetCoreVersion>netcoreapp2.1</NetCoreVersion>

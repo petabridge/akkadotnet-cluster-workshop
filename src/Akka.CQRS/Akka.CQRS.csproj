@@ -8,5 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="Akka" Version="$(AkkaVersion)" />
+    <PackageReference Include="Google.Protobuf" Version="$(GoogleProtobufVersion)" />
   </ItemGroup>
 </Project>
