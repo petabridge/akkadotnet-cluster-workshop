@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Cluster.Tools.Client;
 using Akka.CQRS.Pricing.Subscriptions.Client;
+using Akka.Event;
 
 namespace Akka.CQRS.Pricing.Web.Actors
 {
@@ -14,6 +15,7 @@ namespace Akka.CQRS.Pricing.Web.Actors
     /// </summary>
     public class StockEventConfiguratorActor : ReceiveActor
     {
+        private readonly ILoggingAdapter _log = Context.GetLogger();
         private IActorRef _clusterClient;
         private readonly IActorRef _stockPublisher;
         private ImmutableHashSet<ActorPath> _initialContacts;
@@ -31,6 +33,7 @@ namespace Akka.CQRS.Pricing.Web.Actors
 
             Receive<Start>(s =>
             {
+                _log.Info("Contacting cluster client on addresses [{0}]", string.Join(",", _initialContacts));
                 _clusterClient.Tell(new SubscribeClientAll(), _stockPublisher);
             });
         }

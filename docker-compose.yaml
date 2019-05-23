@@ -52,6 +52,21 @@ services:
     depends_on:
       - "lighthouse"
 
+  pricing-root:
+    image: akka.cqrs.pricing
+    hostname: pricing-root
+    ports:
+      - '0:9110'
+    environment:
+      CLUSTER_SEEDS: "akka.tcp://AkkaTrader@lighthouse:4053"
+      CLUSTER_PORT: 6055
+      CLUSTER_IP: "pricing-root"
+      MONGO_CONNECTION_STR: "mongodb://mongo:27017/akkaTrader"
+    restart: on-failure
+    depends_on:
+      - "mongo"
+      - "lighthouse"
+
   pricing-engine:
     image: akka.cqrs.pricing
     ports:
@@ -63,3 +78,15 @@ services:
     restart: on-failure
     depends_on:
       - "mongo"
+      - "lighthouse"
+
+  pricing-web:
+    image: akka.cqrs.pricing.web
+    ports:
+      - '8999:80'
+    environment:
+      CLUSTER_SEEDS: "akka.tcp://AkkaTrader@pricing-root:6055"
+      CLUSTER_PORT: 16666
+    restart: on-failure
+    depends_on:
+      - "pricing-engine"
