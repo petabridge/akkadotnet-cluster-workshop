@@ -15,6 +15,13 @@
     <PackageReference Include="Akka.Bootstrap.Docker" Version="$(AkkaBootstrapVersion)" />
   </ItemGroup>
 
+   <ItemGroup Condition="'$(Configuration)' == 'Phobos'">
+    <PackageReference Include="Phobos.Actor.Cluster" Version="$(PhobosVersion)" />
+    <PackageReference Include="Phobos.Tracing.Jaeger" Version="$(PhobosTracingVersion)" />
+    <PackageReference Include="Phobos.Monitoring.StatsD" Version="$(PhobosMonitoringVersion)" />
+  </ItemGroup>
+
+
   <ItemGroup>
     <ProjectReference Include="..\Akka.CQRS\Akka.CQRS.csproj" />
   </ItemGroup>
