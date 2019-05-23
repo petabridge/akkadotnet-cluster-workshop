@@ -58,18 +58,7 @@ Target "RestorePackages" (fun _ ->
     let customSource = getBuildParamOrDefault "customNuGetSource" ""
 
     if(hasBuildParam "customNuGetSource") then
-        DotNetCli.Restore
-            (fun p -> 
-                { p with
-                    Project = solutionFile
-                    NoCache = false
-                    AdditionalArgs = [sprintf "-s %s -s https://api.nuget.org/v3/index.json" customSource]})
-    else
-        DotNetCli.Restore
-            (fun p -> 
-                { p with
-                    Project = solutionFile
-                    NoCache = false })
+        XmlPokeInnerText "./NuGet.config" "//[@key='phobos']/@value" customSource
 )
 
 
