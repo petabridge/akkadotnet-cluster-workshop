@@ -7,7 +7,7 @@ namespace Akka.CQRS.Commands
     /// <summary>
     /// Query an order book for the set of recent matches
     /// </summary>
-    public sealed class GetRecentMatches : IWithStockId
+    public sealed class GetRecentMatches : IWithStockId, ITradeEvent
     {
         public GetRecentMatches(string stockId)
         {
