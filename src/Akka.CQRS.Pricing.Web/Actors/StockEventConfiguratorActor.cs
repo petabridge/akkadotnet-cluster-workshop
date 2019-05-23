@@ -28,19 +28,19 @@ namespace Akka.CQRS.Pricing.Web.Actors
 
         public StockEventConfiguratorActor(IActorRef stockPublisher, IReadOnlyList<Address> contactAddresses)
         {
-            _initialContacts = contactAddresses.Select(x => new RootActorPath(x) / "user" / "subscriptions").ToImmutableHashSet();
+            _initialContacts = contactAddresses.Select(x => new RootActorPath(x) / "system" / "receptionist").ToImmutableHashSet();
             _stockPublisher = stockPublisher;
 
             Receive<Start>(s =>
             {
                 _log.Info("Contacting cluster client on addresses [{0}]", string.Join(",", _initialContacts));
-                _clusterClient.Tell(new SubscribeClientAll(), _stockPublisher);
+                _clusterClient.Tell(new ClusterClient.Send("/user/subscriptions", new SubscribeClientAll()), _stockPublisher);
             });
         }
 
         protected override void PreStart()
         {
-            Self.Tell(Start.Instance);
+            Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(5), Self, Start.Instance, ActorRefs.NoSender);
             _clusterClient = Context.ActorOf(Akka.Cluster.Tools.Client.ClusterClient.Props(ClusterClientSettings
                 .Create(Context.System)
                 .WithInitialContacts(_initialContacts)));

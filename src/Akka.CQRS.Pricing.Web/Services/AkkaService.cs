@@ -21,6 +21,7 @@ namespace Akka.CQRS.Pricing.Web.Services
 
         public Task StartActorSystem(StockHubHelper helper)
         {
+            Console.WriteLine("STARTING AKKA.NET");
             var conf = ConfigurationFactory.ParseString(File.ReadAllText("app.conf")).BootstrapFromDocker();
 
             // need to disable Akka.Cluster

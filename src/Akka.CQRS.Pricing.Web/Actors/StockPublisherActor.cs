@@ -25,6 +25,7 @@ namespace Akka.CQRS.Pricing.Web.Actors
             {
                 try
                 {
+                    _log.Info("Received event {0}", p);
                     await hub.WritePriceChanged(p);
                 }
                 catch (Exception ex)
@@ -37,6 +38,7 @@ namespace Akka.CQRS.Pricing.Web.Actors
             {
                 try
                 {
+                    _log.Info("Received event {0}", p);
                     await hub.WriteVolumeChanged(p);
                 }
                 catch (Exception ex)

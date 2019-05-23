@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Akka.CQRS.Pricing.Web.Hubs;
 using Akka.CQRS.Pricing.Web.Services;
@@ -59,6 +60,7 @@ namespace Akka.CQRS.Pricing.Web
             });
 
             app.UseSignalR(builder => { builder.MapHub<StockHub>("/hubs/stockHub"); });
+            app.ApplicationServices.GetService<StockBootstrap>().StartAsync(CancellationToken.None); //start Akka.NET
         }
     }
 }
