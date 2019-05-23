@@ -54,12 +54,22 @@ Target "AssemblyInfo" (fun _ ->
     XmlPokeInnerText "./src/common.props" "//Project/PropertyGroup/PackageReleaseNotes" (releaseNotes.Notes |> String.concat "\n")
 )
 
-Target "Build" (fun _ ->          
-    DotNetCli.Build
-        (fun p -> 
-            { p with
-                Project = solutionFile
-                Configuration = configuration }) // "Rebuild"  
+Target "Build" (fun _ ->      
+    let customSource = getBuildParamOrDefault "customNuGetSource" ""
+
+    if(hasBuildParam "customNuGetSource") then
+        DotNetCli.Build
+            (fun p -> 
+                { p with
+                    Project = solutionFile
+                    Configuration = configuration
+                    AdditionalArgs = [sprintf "-s %s -s https://api.nuget.org/v3/index.json" customSource]})
+    else
+        DotNetCli.Build
+            (fun p -> 
+                { p with
+                    Project = solutionFile
+                    Configuration = configuration }) // "Rebuild"  
 )
 
 
@@ -270,13 +280,25 @@ Target "PublishCode" (fun _ ->
                       ++ "src/**/*.Web.csproj"
 
     let runSingleProject project =
-        DotNetCli.Publish
-            (fun p -> 
-                { p with
-                    Project = project
-                    Configuration = configuration
-                    VersionSuffix = overrideVersionSuffix project
-                    })
+        let customSource = getBuildParamOrDefault "customNuGetSource" ""
+
+        if(hasBuildParam "customNuGetSource") then
+            DotNetCli.Publish
+                (fun p -> 
+                    { p with
+                        Project = project
+                        Configuration = configuration
+                        VersionSuffix = overrideVersionSuffix project
+                        AdditionalArgs = [sprintf "-s %s -s https://api.nuget.org/v3/index.json" customSource]
+                        })
+        else
+            DotNetCli.Publish
+                (fun p -> 
+                    { p with
+                        Project = project
+                        Configuration = configuration
+                        VersionSuffix = overrideVersionSuffix project
+                        })
 
     projects |> Seq.iter (runSingleProject)
 )
