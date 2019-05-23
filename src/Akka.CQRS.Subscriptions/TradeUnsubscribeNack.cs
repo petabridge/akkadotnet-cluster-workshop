@@ -3,16 +3,16 @@
     /// <summary>
     /// Unsubscribe from a specific ticker was not successful.
     /// </summary>
-    public sealed class TradeUnsubscribeNack
+    public sealed class TradeUnsubscribeNack : IWithStockId
     {
-        public TradeUnsubscribeNack(string tickerSymbol, TradeEventType[] events, string reason)
+        public TradeUnsubscribeNack(string stockId, TradeEventType[] events, string reason)
         {
-            TickerSymbol = tickerSymbol;
+            StockId = stockId;
             Events = events;
             Reason = reason;
         }
 
-        public string TickerSymbol { get; }
+        public string StockId { get; }
 
         public TradeEventType[] Events { get; }
 
