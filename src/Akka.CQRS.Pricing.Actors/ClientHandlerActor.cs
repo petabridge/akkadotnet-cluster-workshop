@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Akka.Actor;
+using Akka.CQRS.Pricing.Subscriptions;
 using Akka.CQRS.Pricing.Subscriptions.Client;
 using Akka.CQRS.Subscriptions;
 using Akka.Event;
@@ -24,7 +25,7 @@ namespace Akka.CQRS.Pricing.Actors
             Receive<SubscribeClient>(s =>
             {
                 _log.Info("Received {0} from {1}", s, Sender);
-                _priceRouter.Tell(new TradeSubscribe(s.StockId, TradeEventHelpers.AllTradeEventTypes, Sender));
+                _priceRouter.Tell(new MarketSubscribe(s.StockId, MarketEventHelpers.AllMarketEventTypes, Sender));
             });
 
             Receive<SubscribeClientAll>(a =>
@@ -32,14 +33,14 @@ namespace Akka.CQRS.Pricing.Actors
                 _log.Info("Received {0} from {1}", a, Sender);
                 foreach (var s in AvailableTickerSymbols.Symbols)
                 {
-                    _priceRouter.Tell(new TradeSubscribe(s, TradeEventHelpers.AllTradeEventTypes, Sender));
+                    _priceRouter.Tell(new MarketSubscribe(s, MarketEventHelpers.AllMarketEventTypes, Sender));
                 }
             });
 
             Receive<UnsubscribeClient>(s =>
             {
                 _log.Info("Received {0} from {1}", s, Sender);
-                _priceRouter.Tell(new TradeUnsubscribe(s.StockId, TradeEventHelpers.AllTradeEventTypes, Sender));
+                _priceRouter.Tell(new MarketUnsubscribe(s.StockId, MarketEventHelpers.AllMarketEventTypes, Sender));
             });
         }
     }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Bootstrap.Docker;
+using Akka.Cluster.Tools.Client;
 using Akka.Configuration;
 using Akka.CQRS.Pricing.Web.Actors;
 using Akka.CQRS.Pricing.Web.Hubs;
@@ -22,7 +23,7 @@ namespace Akka.CQRS.Pricing.Web.Services
         public Task StartActorSystem(StockHubHelper helper)
         {
             Console.WriteLine("STARTING AKKA.NET");
-            var conf = ConfigurationFactory.ParseString(File.ReadAllText("app.conf")).BootstrapFromDocker();
+            var conf = ConfigurationFactory.ParseString(File.ReadAllText("app.conf")).BootstrapFromDocker().WithFallback(ClusterClientReceptionist.DefaultConfig());
 
             // need to disable Akka.Cluster
             var finalConfig = ConfigurationFactory.ParseString("akka.actor.provider = remote").WithFallback(conf);

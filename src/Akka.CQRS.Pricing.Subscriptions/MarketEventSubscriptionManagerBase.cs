@@ -10,7 +10,7 @@ namespace Akka.CQRS.Pricing.Subscriptions
     {
         public async Task<MarketSubscribeAck> Subscribe(string tickerSymbol, IActorRef subscriber)
         {
-            return await Subscribe(tickerSymbol, MarketEventHelpers.AllTradeEventTypes, subscriber);
+            return await Subscribe(tickerSymbol, MarketEventHelpers.AllMarketEventTypes, subscriber);
         }
 
         public async Task<MarketSubscribeAck> Subscribe(string tickerSymbol, MarketEventType @event, IActorRef subscriber)
@@ -31,7 +31,7 @@ namespace Akka.CQRS.Pricing.Subscriptions
 
         public async Task<MarketUnsubscribeAck> Unsubscribe(string tickerSymbol, IActorRef subscriber)
         {
-            return await Unsubscribe(tickerSymbol, MarketEventHelpers.AllTradeEventTypes, subscriber);
+            return await Unsubscribe(tickerSymbol, MarketEventHelpers.AllMarketEventTypes, subscriber);
         }
     }
 }

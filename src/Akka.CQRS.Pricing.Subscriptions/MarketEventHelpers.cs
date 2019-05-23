@@ -9,7 +9,7 @@ namespace Akka.CQRS.Pricing.Subscriptions
     /// </summary>
     public static class MarketEventHelpers
     {
-        public static readonly MarketEventType[] AllTradeEventTypes =
+        public static readonly MarketEventType[] AllMarketEventTypes =
             Enum.GetValues(typeof(MarketEventType)).Cast<MarketEventType>().ToArray();
 
         public static MarketEventType ToMarketEventType(this IMarketEvent @event)

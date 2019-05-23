@@ -31,16 +31,37 @@ namespace Akka.CQRS.Pricing.Web.Actors
             _initialContacts = contactAddresses.Select(x => new RootActorPath(x) / "system" / "receptionist").ToImmutableHashSet();
             _stockPublisher = stockPublisher;
 
+            Initializing();
+        }
+
+        private void Receiving()
+        {
+            ReceiveAny(_ => _stockPublisher.Forward(_));
+        }
+
+        private void Initializing()
+        {
             Receive<Start>(s =>
             {
                 _log.Info("Contacting cluster client on addresses [{0}]", string.Join(",", _initialContacts));
-                _clusterClient.Tell(new ClusterClient.Send("/user/subscriptions", new SubscribeClientAll()), _stockPublisher);
+                _clusterClient.Tell(new ClusterClient.Send("/user/subscriptions", new SubscribeClientAll()));
+            });
+
+            Receive<ReceiveTimeout>(t => { Self.Tell(Start.Instance); });
+
+            ReceiveAny(_ =>
+            {
+                // connected via ClusterClient now
+                Become(Receiving);
+                Context.SetReceiveTimeout(null);
+                _stockPublisher.Forward(_);
             });
         }
 
         protected override void PreStart()
         {
-            Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(5), Self, Start.Instance, ActorRefs.NoSender);
+            Context.SetReceiveTimeout(TimeSpan.FromSeconds(3));
+            Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(2), Self, Start.Instance, ActorRefs.NoSender);
             _clusterClient = Context.ActorOf(Akka.Cluster.Tools.Client.ClusterClient.Props(ClusterClientSettings
                 .Create(Context.System)
                 .WithInitialContacts(_initialContacts)));
