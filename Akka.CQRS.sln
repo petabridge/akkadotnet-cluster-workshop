@@ -51,6 +51,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akka.CQRS.Pricing.Subscript
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akka.CQRS.Pricing.Web", "src\Akka.CQRS.Pricing.Web\Akka.CQRS.Pricing.Web.csproj", "{2137ADE9-E36F-4CB9-8384-FB41E3B27FFD}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Akka.CQRS.Subscriptions.Tests", "src\Akka.CQRS.Subscriptions.Tests\Akka.CQRS.Subscriptions.Tests.csproj", "{ACE53C1C-CCFC-4A0E-B924-3CA4435FF986}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -160,6 +162,12 @@ Global
 		{2137ADE9-E36F-4CB9-8384-FB41E3B27FFD}.Phobos|Any CPU.Build.0 = Phobos|Any CPU
 		{2137ADE9-E36F-4CB9-8384-FB41E3B27FFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2137ADE9-E36F-4CB9-8384-FB41E3B27FFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACE53C1C-CCFC-4A0E-B924-3CA4435FF986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACE53C1C-CCFC-4A0E-B924-3CA4435FF986}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACE53C1C-CCFC-4A0E-B924-3CA4435FF986}.Phobos|Any CPU.ActiveCfg = Phobos|Any CPU
+		{ACE53C1C-CCFC-4A0E-B924-3CA4435FF986}.Phobos|Any CPU.Build.0 = Phobos|Any CPU
+		{ACE53C1C-CCFC-4A0E-B924-3CA4435FF986}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACE53C1C-CCFC-4A0E-B924-3CA4435FF986}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -182,6 +190,7 @@ Global
 		{73E9BD37-D311-42FF-80E5-3E6C38835910} = {08DA7279-F347-4F54-95B6-7335F52746A6}
 		{2E24DA6E-348E-41FE-8A2B-F379AA6E7F1D} = {C60F4548-6FFD-4D0E-B8C3-6CD6BC8FBC2C}
 		{2137ADE9-E36F-4CB9-8384-FB41E3B27FFD} = {C60F4548-6FFD-4D0E-B8C3-6CD6BC8FBC2C}
+		{ACE53C1C-CCFC-4A0E-B924-3CA4435FF986} = {08DA7279-F347-4F54-95B6-7335F52746A6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B99E6BB8-642A-4A68-86DF-69567CBA700A}
