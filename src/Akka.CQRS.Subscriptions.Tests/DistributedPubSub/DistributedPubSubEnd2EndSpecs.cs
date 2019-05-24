@@ -24,7 +24,7 @@ namespace Akka.CQRS.Subscriptions.Tests.DistributedPubSub
 
         public Address SelfAddress => Cluster.Cluster.Get(Sys).SelfAddress;
 
-        [Fact(DisplayName = "Should be able to subscribe and publish to trade event topics.")]
+        [Fact(DisplayName = "[DistributedPubSubTradeEventSubscriptionManager] Should be able to subscribe and publish to trade event topics.")]
         public async Task ShouldSubscribeAndPublishToTradeEventTopics()
         {
             // Join the cluster
