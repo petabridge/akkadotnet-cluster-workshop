@@ -3,12 +3,19 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>$(NetCoreVersion)</TargetFramework>
+    <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Phobos|AnyCPU'">
+    <OutputPath>bin\Release\$(NetCoreVersion)\</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <Content Include="app.conf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Akka.HealthCheck.Persistence" Version="0.2.1" />
     <PackageReference Include="Akka.Persistence.MongoDb" Version="1.3.12" />

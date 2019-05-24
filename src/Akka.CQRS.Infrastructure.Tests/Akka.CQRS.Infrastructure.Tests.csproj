@@ -4,6 +4,8 @@
     <TargetFramework>$(NetCoreVersion)</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

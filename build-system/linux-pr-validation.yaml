@@ -19,4 +19,4 @@ jobs:
     name: Ubuntu
     vmImage: 'ubuntu-16.04'
     scriptFileName: ./build.sh
-    scriptArgs: all
+    scriptArgs: 'all phobos customNuGetSource=$(phobosNuGet)'

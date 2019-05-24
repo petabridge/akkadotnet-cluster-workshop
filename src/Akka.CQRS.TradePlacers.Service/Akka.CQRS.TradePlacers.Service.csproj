@@ -3,6 +3,11 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>$(NetCoreVersion)</TargetFramework>
+    <Configurations>Debug;Release;Phobos</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Phobos|AnyCPU'">
+    <OutputPath>bin\Release\$(NetCoreVersion)\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

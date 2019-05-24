@@ -11,7 +11,7 @@ open Fake.DocFxHelper
 
 // Information about the project for Nuget and Assembly info files
 let product = "Akka.CQRS"
-let configuration = "Release"
+let configuration = if hasBuildParam "phobos" then "Phobos" else "Release"
 
 // Metadata used when signing packages and DLLs
 let signingName = "My Library"
@@ -54,12 +54,20 @@ Target "AssemblyInfo" (fun _ ->
     XmlPokeInnerText "./src/common.props" "//Project/PropertyGroup/PackageReleaseNotes" (releaseNotes.Notes |> String.concat "\n")
 )
 
-Target "Build" (fun _ ->          
-    DotNetCli.Build
-        (fun p -> 
-            { p with
-                Project = solutionFile
-                Configuration = configuration }) // "Rebuild"  
+Target "RestorePackages" (fun _ ->
+    let customSource = getBuildParamOrDefault "customNuGetSource" ""
+
+    if(hasBuildParam "customNuGetSource") then
+        XmlPokeInnerText "./NuGet.config" "//add[@key='phobos']/@value" customSource
+)
+
+
+Target "Build" (fun _ ->      
+       DotNetCli.Build
+            (fun p -> 
+                { p with
+                    Project = solutionFile
+                    Configuration = configuration }) // "Rebuild"  
 )
 
 
@@ -93,8 +101,8 @@ Target "RunTests" (fun _ ->
     let runSingleProject project =
         let arguments =
             match (hasTeamCity) with
-            | true -> (sprintf "test -c Release --no-build --logger:trx --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none -teamcity" (outputTests))
-            | false -> (sprintf "test -c Release --no-build --logger:trx --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none" (outputTests))
+            | true -> (sprintf "test -c %s --no-build --logger:trx --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none -teamcity" configuration outputTests)
+            | false -> (sprintf "test -c %s --no-build --logger:trx --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none" configuration outputTests)
 
         let result = ExecProcess(fun info ->
             info.FileName <- "dotnet"
@@ -276,6 +284,7 @@ Target "PublishCode" (fun _ ->
                     Project = project
                     Configuration = configuration
                     VersionSuffix = overrideVersionSuffix project
+                    AdditionalArgs = ["--no-restore --output bin/Release/netcoreapp2.1/publish"] // would be ideal to change publish dir via MSBuild
                     })
 
     projects |> Seq.iter (runSingleProject)
@@ -398,7 +407,7 @@ Target "Docker" DoNothing
 Target "Nuget" DoNothing
 
 // build dependencies
-"Clean" ==> "AssemblyInfo" ==> "Build" ==> "BuildRelease"
+"Clean" ==> "AssemblyInfo" ==> "RestorePackages" ==> "Build" ==> "BuildRelease"
 
 // tests dependencies
 "Build" ==> "RunTests"
@@ -417,6 +426,6 @@ Target "Nuget" DoNothing
 "BuildRelease" ==> "All"
 "RunTests" ==> "All"
 "NBench" ==> "All"
-"Nuget" ==> "All"
+"Docker" ==> "All"
 
 RunTargetOrDefault "Help"

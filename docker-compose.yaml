@@ -12,9 +12,34 @@ services:
     image: mongo-express
     restart: always
     ports:
-      - 8031:8081
+      - '8031:8081'
     depends_on:
       - "mongo"
+
+  graphite:
+    image: graphiteapp/graphite-statsd
+    hostname: graphite
+    container_name: graphite
+    restart: always
+    ports:
+      - "0:80"
+
+  grafana:
+    image: grafana/grafana
+    restart: always
+    ports:
+      - '3000:3000'
+    links:
+        - graphite
+    environment:
+        - GF_SECURITY_ADMIN_PASSWORD=password
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.6
+    hostname: jaeger
+    restart: always
+    ports:
+      - '16686:16686'
 
   lighthouse:
     image: petabridge/lighthouse:latest
@@ -27,6 +52,9 @@ services:
       CLUSTER_PORT: 4053
       CLUSTER_IP: "lighthouse"
       CLUSTER_SEEDS: "akka.tcp://AkkaTrader@lighthouse:4053"
+      STATSD_PORT: 8125
+      STATSD_URL: "graphite"
+      JAEGER_AGENT_HOST: "jaeger"
 
   tradeprocessor:
     image: akka.cqrs.tradeprocessor
@@ -36,6 +64,9 @@ services:
       CLUSTER_SEEDS: "akka.tcp://AkkaTrader@lighthouse:4053"
       CLUSTER_PORT: 5110
       MONGO_CONNECTION_STR: "mongodb://mongo:27017/akkaTrader"
+      STATSD_PORT: 8125
+      STATSD_URL: "graphite"
+      JAEGER_AGENT_HOST: "jaeger"
     restart: on-failure
     depends_on:
       - "mongo"
@@ -48,6 +79,9 @@ services:
     environment:
       CLUSTER_SEEDS: "akka.tcp://AkkaTrader@lighthouse:4053"
       CLUSTER_PORT: 5110
+      STATSD_PORT: 8125
+      STATSD_URL: "graphite"
+      JAEGER_AGENT_HOST: "jaeger"
     restart: on-failure
     depends_on:
       - "lighthouse"
@@ -62,6 +96,9 @@ services:
       CLUSTER_PORT: 6055
       CLUSTER_IP: "pricing-root"
       MONGO_CONNECTION_STR: "mongodb://mongo:27017/akkaTrader"
+      STATSD_PORT: 8125
+      STATSD_URL: "graphite"
+      JAEGER_AGENT_HOST: "jaeger"
     restart: on-failure
     depends_on:
       - "mongo"
@@ -75,6 +112,9 @@ services:
       CLUSTER_SEEDS: "akka.tcp://AkkaTrader@lighthouse:4053"
       CLUSTER_PORT: 6055
       MONGO_CONNECTION_STR: "mongodb://mongo:27017/akkaTrader"
+      STATSD_PORT: 8125
+      STATSD_URL: "graphite"
+      JAEGER_AGENT_HOST: "jaeger"
     restart: on-failure
     depends_on:
       - "mongo"
@@ -87,6 +127,9 @@ services:
     environment:
       CLUSTER_SEEDS: "akka.tcp://AkkaTrader@pricing-root:6055"
       CLUSTER_PORT: 16666
+      STATSD_PORT: 8125
+      STATSD_URL: "graphite"
+      JAEGER_AGENT_HOST: "jaeger"
     restart: on-failure
     depends_on:
       - "pricing-engine"

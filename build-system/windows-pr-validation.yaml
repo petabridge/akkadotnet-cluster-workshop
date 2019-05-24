@@ -13,10 +13,13 @@ pr:
 
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
+variables:
+  - group: phobosKeys
+
 jobs:
 - template: azure-pipeline.template.yaml
   parameters:
     name: Windows
     vmImage: 'vs2017-win2016'
     scriptFileName: build.cmd
-    scriptArgs: all
+    scriptArgs: 'RunTests phobos customNuGetSource=$(phobosNuGet)'

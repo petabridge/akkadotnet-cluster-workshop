@@ -4,6 +4,7 @@
   <PropertyGroup>
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
     <Description>Pub-sub abstractions for pricing events.</Description>
+    <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

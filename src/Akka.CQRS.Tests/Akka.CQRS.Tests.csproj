@@ -2,7 +2,8 @@
   <Import Project="..\common.props" />
 
   <PropertyGroup>    
-    <TargetFramework>$(NetCoreVersion)</TargetFramework>
+    <TargetFramework>$(NetCoreVersion)</TargetFramework>    
+    <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

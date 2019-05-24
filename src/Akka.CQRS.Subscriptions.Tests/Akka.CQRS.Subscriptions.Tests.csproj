@@ -2,7 +2,7 @@
   <Import Project="..\common.props" />
   <PropertyGroup>
     <TargetFramework>$(NetCoreVersion)</TargetFramework>
-
+    <Configurations>Debug;Release;Phobos</Configurations>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
