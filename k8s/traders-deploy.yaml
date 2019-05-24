@@ -44,7 +44,7 @@ spec:
         - name: STATSD_PORT
           value: "8125"
         - name: STATSD_URL
-          value: "graphite"
+          value: "statsd-agent"
         - name: JAEGER_AGENT_HOST
           value: "jaeger-agent"
         - name: POD_NAME
@@ -52,7 +52,7 @@ spec:
             fieldRef:
               fieldPath: metadata.name
         - name: CLUSTER_IP
-          value: "$(POD_NAME).tradeprocessor"
+          value: "$(POD_NAME).traders"
         - name: CLUSTER_PORT
           value: "5110"
         - name: CLUSTER_SEEDS

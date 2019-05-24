@@ -1,37 +1,37 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: trade-processor
+  name: pricing
   labels:
-    app: trade-processor
+    app: pricing
 spec:
   clusterIP: None
   ports:
   - port: 5110
   selector:
-    app: trade-processor
+    app: pricing
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: trade-processor
+  name: pricing
   labels:
-    app: trade-processor
+    app: pricing
 spec:
-  serviceName: trade-processor
-  replicas: 1
+  serviceName: pricing
+  replicas: 3
   selector:
     matchLabels:
-      app: trade-processor
+      app: pricing
   template:
     metadata:
       labels:
-        app: trade-processor
+        app: pricing
     spec:
       terminationGracePeriodSeconds: 35
       containers:
-      - name: trade-processor
-        image: akka.cqrs.tradeprocessor:0.1.0
+      - name: pricing
+        image: akka.cqrs.pricing:0.1.0
         lifecycle:
           preStop:
             exec:
@@ -54,7 +54,7 @@ spec:
             fieldRef:
               fieldPath: metadata.name
         - name: CLUSTER_IP
-          value: "$(POD_NAME).tradeprocessor"
+          value: "$(POD_NAME).pricing"
         - name: CLUSTER_PORT
           value: "5110"
         - name: CLUSTER_SEEDS
