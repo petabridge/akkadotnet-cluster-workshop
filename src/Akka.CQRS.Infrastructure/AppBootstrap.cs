@@ -48,16 +48,19 @@ namespace Akka.CQRS.Infrastructure
                 .WithFallback(DistributedPubSub.DefaultConfig())
                 .BootstrapFromDocker();
 
+
+#if PHOBOS
+            return config.BootstrapPhobos(appConfig);
+#else
+
             if (!appConfig.NeedClustering)
             {
                 return ConfigurationFactory.ParseString("akka.actor.provider = remote").WithFallback(config);
             }
 
-#if PHOBOS
-            return config.BootstrapPhobos(appConfig);
-#endif
 
             return config;
+#endif
         }
 
 #if PHOBOS
