@@ -97,11 +97,11 @@ namespace Akka.CQRS.Infrastructure
 
             if (!appConfig.NeedClustering)
             {
-                var config = ConfigurationFactory.ParseString(@"""Phobos.Actor.Remote.PhobosRemoteActorRefProvider, Phobos.Actor.Remote""");
+                var config = ConfigurationFactory.ParseString(@"akka.actor.provider = ""Phobos.Actor.Remote.PhobosRemoteActorRefProvider, Phobos.Actor.Remote""");
                 return config.WithFallback(phobosConfig).WithFallback(c);
             }
 
-            return phobosConfig;
+            return phobosConfig.WithFallback(c);
         }
 
 #endif
