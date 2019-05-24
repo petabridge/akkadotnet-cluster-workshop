@@ -64,6 +64,8 @@ namespace Akka.CQRS.Infrastructure
         }
 
 #if PHOBOS
+        public const string ENABLE_PHOBOS = "ENABLE_PHOBOS";
+
         /// <summary>
         ///     Name of the <see cref="Environment" /> variable used to direct Phobos' StatsD
         ///     output.
@@ -84,6 +86,18 @@ namespace Akka.CQRS.Infrastructure
 
         public static Config BootstrapPhobos(this Config c, AppBootstrapConfig appConfig)
         {
+            var enablePhobos = Environment.GetEnvironmentVariable(ENABLE_PHOBOS);
+            if (!bool.TryParse(enablePhobos, out var phobosEnabled))
+            {
+                // don't turn on Phobos
+                return c;
+            }
+            else if (!phobosEnabled)
+            {
+                // don't turn on Phobos
+                return c;
+            }
+
             var phobosConfig = GetPhobosConfig();
 
             var statsdUrl = Environment.GetEnvironmentVariable(STATSD_URL);
