@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Akka.Actor;
@@ -37,14 +38,19 @@ namespace Akka.CQRS.Subscriptions.Tests.Actor
 
             // create a matching trade, which should result in a Fill + Match being published.
             var time = DateTimeOffset.UtcNow;
-            var bid = new Bid("MSFT", "foo1", 10.0m, 1.0d, time);
-            var ask = new Ask("MSFT", "foo2", 10.0m, 1.0d, time);
-            _orderBookMaster.Tell(bid);
-            _orderBookMaster.Tell(ask);
+            var bid = new ConfirmableMessage<Bid>(new Bid("MSFT", "foo1", 10.0m, 1.0d, time), 100L, "fuber");
+            var ask = new ConfirmableMessage<Ask>(new Ask("MSFT", "foo2", 10.0m, 1.0d, time), 101L, "fuber");
+
+            var confirmationProbe = CreateTestProbe();
+
+            _orderBookMaster.Tell(bid, confirmationProbe);
+            _orderBookMaster.Tell(ask, confirmationProbe);
+
+            confirmationProbe.ReceiveN(2).All(x => x is Confirmation).Should().BeTrue();
 
             ExpectMsgAllOf<IWithStockId>(new Fill("foo1", "MSFT", 1.0d, 10.0m, "foo2", time),
                 new Fill("foo2", "MSFT", 1.0d, 10.0m, "foo1", time),
-                new Match("MSFT", "foo2", "foo1", 10.0m, 1.0d, time));
+                new Match("MSFT", "foo1", "foo2", 10.0m, 1.0d, time), bid.Message, ask.Message);
         }
     }
 }

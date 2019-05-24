@@ -30,6 +30,11 @@ namespace Akka.CQRS.Infrastructure
                 return stockMsg.StockId;
             }
 
+            if (message is IConfirmableMessageEnvelope<IWithStockId> envelope)
+            {
+                return envelope.Message.StockId;
+            }
+
             switch (message)
             {
                 case ConfirmableMessage<Ask> a:
