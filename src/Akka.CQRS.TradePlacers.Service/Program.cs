@@ -3,12 +3,14 @@ using System.IO;
 using System.Linq;
 using Akka.Actor;
 using Akka.Bootstrap.Docker;
+using Akka.Cluster.Routing;
 using Akka.Cluster.Sharding;
 using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Configuration;
 using Akka.CQRS.Infrastructure;
 using Akka.CQRS.Infrastructure.Ops;
 using Akka.CQRS.TradeProcessor.Actors;
+using Akka.Routing;
 using Akka.Util;
 using Petabridge.Cmd.Cluster;
 using Petabridge.Cmd.Cluster.Sharding;
@@ -25,6 +27,12 @@ namespace Akka.CQRS.TradePlacers.Service
             var conf = ConfigurationFactory.ParseString(config).BoostrapApplication(new AppBootstrapConfig(false, true));
 
             var actorSystem = ActorSystem.Create("AkkaTrader", conf);
+
+            var tradeRouter = actorSystem.ActorOf(
+                Props.Empty.WithRouter(new ClusterRouterGroup(
+                    new ConsistentHashingGroup(new[] {"/user/orderbooks"},
+                        TradeEventConsistentHashMapping.TradeEventMapping),
+                    ClusterRouterGroupSettings.FromConfig(conf))), "tradesRouter");
 
             Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
             {

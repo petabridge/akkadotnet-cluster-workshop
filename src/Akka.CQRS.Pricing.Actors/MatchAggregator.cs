@@ -219,6 +219,7 @@ namespace Akka.CQRS.Pricing.Actors
                     var ack = await _marketEventSubscriptionManager.Subscribe(TickerSymbol, sub.Events, sub.Subscriber);
                     Context.Watch(sub.Subscriber);
                     sub.Subscriber.Tell(ack);
+                    Sender.Tell(ack); // need this for ASK operations.
                 }
                 catch (Exception ex)
                 {
@@ -234,6 +235,7 @@ namespace Akka.CQRS.Pricing.Actors
                     var ack = await _marketEventSubscriptionManager.Unsubscribe(PersistenceId, unsub.Events, unsub.Subscriber);
                     // leave DeathWatch intact, in case actor is still subscribed to additional topics
                     unsub.Subscriber.Tell(ack);
+                    Sender.Tell(ack); // need this for ASK operations.
                 }
                 catch (Exception ex)
                 {
