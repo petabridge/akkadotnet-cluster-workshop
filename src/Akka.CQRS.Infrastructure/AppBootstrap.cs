@@ -73,17 +73,26 @@ namespace Akka.CQRS.Infrastructure
         /// </summary>
         public const string STATSD_PORT = "STATSD_PORT";
 
+        /// <summary>
+        ///     Name of the <see cref="Environment" /> variable used to direct Phobos' Jaeger
+        ///     output.
+        /// </summary>
+        public const string JAEGER_AGENT_HOST = "JAEGER_AGENT_HOST";
+
         public static Config BootstrapPhobos(this Config c, AppBootstrapConfig appConfig)
         {
             var phobosConfig = GetPhobosConfig();
 
             var statsdUrl = Environment.GetEnvironmentVariable(STATSD_URL);
             var statsDPort = Environment.GetEnvironmentVariable(STATSD_PORT);
+            var jaegerAgentHost = Environment.GetEnvironmentVariable(JAEGER_AGENT_HOST);
 
             if (!string.IsNullOrEmpty(statsdUrl) && int.TryParse(statsDPort, out var portNum))
                 phobosConfig = ConfigurationFactory.ParseString($"phobos.monitoring.statsd.endpoint=\"{statsdUrl}\"" +
                                                                 Environment.NewLine +
-                                                                $"phobos.monitoring.statsd.port={portNum}")
+                                                                $"phobos.monitoring.statsd.port={portNum}" +
+                                                                Environment.NewLine +
+                                                                $"phobos.tracing.jaeger.agent.host={jaegerAgentHost}")
                     .WithFallback(phobosConfig);
 
             if (!appConfig.NeedClustering)
