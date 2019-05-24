@@ -58,7 +58,7 @@ Target "RestorePackages" (fun _ ->
     let customSource = getBuildParamOrDefault "customNuGetSource" ""
 
     if(hasBuildParam "customNuGetSource") then
-        XmlPokeInnerText "./NuGet.config" "//[@key='phobos']/@value" customSource
+        XmlPokeInnerText "./NuGet.config" "//add[@key='phobos']/@value" customSource
 )
 
 
