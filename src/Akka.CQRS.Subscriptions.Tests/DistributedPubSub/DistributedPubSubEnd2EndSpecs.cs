@@ -41,7 +41,7 @@ namespace Akka.CQRS.Subscriptions.Tests.DistributedPubSub
 
             // Subscribe to all topics
             var subAck = await subManager.Subscribe("MSFT", TestActor);
-            subAck.TickerSymbol.Should().Be("MSFT");
+            subAck.StockId.Should().Be("MSFT");
 
             var bid = new Bid("MSFT", "foo", 10.0m, 1.0d, DateTimeOffset.UtcNow);
             published.Publish("MSFT", bid);
