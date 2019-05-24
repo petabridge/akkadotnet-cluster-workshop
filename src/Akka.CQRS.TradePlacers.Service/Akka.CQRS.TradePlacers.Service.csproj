@@ -6,6 +6,10 @@
     <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Phobos|AnyCPU'">
+    <OutputPath>bin\Release\$(NetCoreVersion)\</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <Content Include="app.conf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
