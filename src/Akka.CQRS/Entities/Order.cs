@@ -14,7 +14,7 @@ namespace Akka.CQRS
     /// <summary>
     /// Represents an unfilled or partially unfilled trade inside the matching engine.
     /// </summary>
-    public struct Order : IWithOrderId, IWithStockId, IEquatable<Order>, IComparable<Order>, IComparable
+    public sealed class Order : IWithOrderId, IWithStockId, IEquatable<Order>, IComparable<Order>, IComparable
     {
         /// <summary>
         /// Represents an empty or completed trade.

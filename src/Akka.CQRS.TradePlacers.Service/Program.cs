@@ -32,7 +32,7 @@ namespace Akka.CQRS.TradePlacers.Service
                 Props.Empty.WithRouter(new ClusterRouterGroup(
                     new ConsistentHashingGroup(new[] {"/user/orderbooks"},
                         TradeEventConsistentHashMapping.TradeEventMapping),
-                    ClusterRouterGroupSettings.FromConfig(conf))), "tradesRouter");
+                    new ClusterRouterGroupSettings(10000, new []{ "/user/orderbooks" }, true, useRole:"trade-processor"))), "tradesRouter");
 
             Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
             {
