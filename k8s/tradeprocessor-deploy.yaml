@@ -19,7 +19,7 @@ metadata:
     app: trade-processor
 spec:
   serviceName: trade-processor
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: trade-processor
