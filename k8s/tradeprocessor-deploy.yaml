@@ -54,7 +54,7 @@ spec:
             fieldRef:
               fieldPath: metadata.name
         - name: CLUSTER_IP
-          value: "$(POD_NAME).tradeprocessor"
+          value: "$(POD_NAME).trade-processor"
         - name: CLUSTER_PORT
           value: "5110"
         - name: CLUSTER_SEEDS
