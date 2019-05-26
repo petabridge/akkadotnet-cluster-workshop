@@ -44,6 +44,7 @@ namespace Akka.CQRS.Infrastructure
                 .WithFallback(GetOpsConfig())
                 .WithFallback(TradeEventSerializer.Config)
                 .WithFallback(ClusterSharding.DefaultConfig())
+                .WithFallback(DistributedData.DistributedData.DefaultConfig()) // needed for DData sharding
                 .WithFallback(ClusterClientReceptionist.DefaultConfig())
                 .WithFallback(DistributedPubSub.DefaultConfig())
                 .BootstrapFromDocker();
