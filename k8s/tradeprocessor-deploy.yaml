@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: akka-cqrs
   name: trade-processor
   labels:
     app: trade-processor
@@ -14,6 +15,7 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  namespace: akka-cqrs
   name: trade-processor
   labels:
     app: trade-processor

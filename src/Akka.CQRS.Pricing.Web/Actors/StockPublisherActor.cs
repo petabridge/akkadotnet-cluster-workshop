@@ -34,7 +34,7 @@ namespace Akka.CQRS.Pricing.Web.Actors
                 }
             });
 
-            ReceiveAsync<IVolumeUpdate>(async p =>
+            ReceiveAsync <IVolumeUpdate>(async p =>
             {
                 try
                 {
