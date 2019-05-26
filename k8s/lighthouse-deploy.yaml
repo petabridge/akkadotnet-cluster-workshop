@@ -19,7 +19,7 @@ metadata:
     app: lighthouse
 spec:
   serviceName: lighthouse
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: lighthouse
