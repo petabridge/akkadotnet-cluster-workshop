@@ -15,7 +15,7 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  amespace: akka-cqrs
+  namespace: akka-cqrs
   name: pricing
   labels:
     app: pricing

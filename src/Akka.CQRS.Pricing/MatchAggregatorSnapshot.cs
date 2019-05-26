@@ -13,8 +13,8 @@ namespace Akka.CQRS.Pricing
         public MatchAggregatorSnapshot(decimal avgPrice, double avgVolume, 
             IReadOnlyList<PriceChanged> recentPriceUpdates, IReadOnlyList<VolumeChanged> recentVolumeUpdates)
         {
-            AvgPrice = avgPrice;
-            AvgVolume = avgVolume;
+            RecentAvgPrice = avgPrice;
+            RecentAvgVolume = avgVolume;
             RecentPriceUpdates = recentPriceUpdates;
             RecentVolumeUpdates = recentVolumeUpdates;
         }
@@ -22,12 +22,12 @@ namespace Akka.CQRS.Pricing
         /// <summary>
         /// The most recently saved average price.
         /// </summary>
-        public decimal AvgPrice { get; }
+        public decimal RecentAvgPrice { get; }
 
         /// <summary>
         /// The most recently saved average volume.
         /// </summary>
-        public double AvgVolume { get; }
+        public double RecentAvgVolume { get; }
 
         public IReadOnlyList<IPriceUpdate> RecentPriceUpdates { get; }
 

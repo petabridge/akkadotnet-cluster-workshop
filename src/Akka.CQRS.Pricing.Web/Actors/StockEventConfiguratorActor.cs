@@ -34,11 +34,6 @@ namespace Akka.CQRS.Pricing.Web.Actors
             Initializing();
         }
 
-        private void Receiving()
-        {
-            ReceiveAny(_ => _stockPublisher.Forward(_));
-        }
-
         private void Initializing()
         {
             Receive<Start>(s =>
@@ -52,15 +47,13 @@ namespace Akka.CQRS.Pricing.Web.Actors
             ReceiveAny(_ =>
             {
                 // connected via ClusterClient now
-                Become(Receiving);
-                Context.SetReceiveTimeout(null);
                 _stockPublisher.Forward(_);
             });
         }
 
         protected override void PreStart()
         {
-            Context.SetReceiveTimeout(TimeSpan.FromSeconds(3));
+            Context.SetReceiveTimeout(TimeSpan.FromSeconds(15));
             Context.System.Scheduler.ScheduleTellOnce(TimeSpan.FromSeconds(2), Self, Start.Instance, ActorRefs.NoSender);
             _clusterClient = Context.ActorOf(Akka.Cluster.Tools.Client.ClusterClient.Props(ClusterClientSettings
                 .Create(Context.System)
