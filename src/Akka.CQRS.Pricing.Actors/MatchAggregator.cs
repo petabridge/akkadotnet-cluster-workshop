@@ -107,7 +107,7 @@ namespace Akka.CQRS.Pricing.Actors
 
         private MatchAggregatorSnapshot SaveAggregateData()
         {
-            return new MatchAggregatorSnapshot(_matchAggregate.AvgPrice.CurrentAvg, _matchAggregate.AvgVolume.CurrentAvg, _priceUpdates.ToList(), _volumeUpdates.ToList());
+            return new MatchAggregatorSnapshot(_matchAggregate.AvgPrice.CurrentAvg, _matchAggregate.AvgVolume.CurrentAvg, _priceUpdates.Cast<PriceChanged>().ToList(), _volumeUpdates.Cast<VolumeChanged>().ToList());
         }
 
         private void AwaitingSubscription()

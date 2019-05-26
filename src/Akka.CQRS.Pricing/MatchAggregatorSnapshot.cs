@@ -11,7 +11,7 @@ namespace Akka.CQRS.Pricing
     public sealed class MatchAggregatorSnapshot
     {
         public MatchAggregatorSnapshot(decimal avgPrice, double avgVolume, 
-            IReadOnlyList<IPriceUpdate> recentPriceUpdates, IReadOnlyList<IVolumeUpdate> recentVolumeUpdates)
+            IReadOnlyList<PriceChanged> recentPriceUpdates, IReadOnlyList<VolumeChanged> recentVolumeUpdates)
         {
             AvgPrice = avgPrice;
             AvgVolume = avgVolume;
