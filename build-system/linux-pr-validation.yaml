@@ -5,6 +5,8 @@ trigger:
     include:
       - dev
       - master
+      - lesson*
+      - start
 
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
