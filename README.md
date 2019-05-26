@@ -173,8 +173,6 @@ When this is used in combination with Akka.Cluster.Sharding the split brain reso
 ### Trading Services Domain
 The write-side cluster, the Trading Services are primarily interested in the placement and matching of new trade orders for buying and selling of specific stocks.
 
-![Akka.CQRS Architectural overview](docs/images/akka-cqrs-architectural-overview.png)
-
 The Trading Services are driven primarily through the use of three actor types:
 
 1. [`BidderActor`](src/Akka.CQRS.TradeProcessor.Actors/BidderActor.cs) - runs inside the "Trade Placement" services and randomly bids on a specific stock;
