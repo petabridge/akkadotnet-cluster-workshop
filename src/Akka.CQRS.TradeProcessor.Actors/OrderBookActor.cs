@@ -161,6 +161,13 @@ namespace Akka.CQRS.TradeProcessor.Actors
                 }
             });
 
+            Command<SaveSnapshotSuccess>(s =>
+            {
+                // clean-up prior snapshots and journal events
+                DeleteSnapshots(new SnapshotSelectionCriteria(s.Metadata.SequenceNr - 1));
+                DeleteMessages(s.Metadata.SequenceNr);
+            });
+
             Command<GetOrderBookSnapshot>(s =>
             {
                 Sender.Tell(_matchingEngine.GetSnapshot());

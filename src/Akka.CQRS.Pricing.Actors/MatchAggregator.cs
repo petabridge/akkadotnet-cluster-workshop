@@ -101,7 +101,11 @@ namespace Akka.CQRS.Pricing.Actors
         private void RecoverAggregateData(MatchAggregatorSnapshot s)
         {
             _matchAggregate = new MatchAggregate(TickerSymbol, s.RecentAvgPrice, s.RecentAvgVolume);
-            _priceUpdates.Enqueue(s.RecentPriceUpdates.ToArray());
+
+            if(s.RecentPriceUpdates != null && s.RecentPriceUpdates.Count > 0)
+                _priceUpdates.Enqueue(s.RecentPriceUpdates.ToArray());
+
+            if(s.RecentVolumeUpdates != null && s.RecentVolumeUpdates.Count > 0)
             _volumeUpdates.Enqueue(s.RecentVolumeUpdates.ToArray());
         }
 
