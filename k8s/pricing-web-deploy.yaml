@@ -2,7 +2,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: pricing-web
-  namespace: akka-cqrs
   labels:
     app: pricing-web
 spec:
@@ -15,7 +14,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: akka-cqrs
   name: pricing-ui
   labels:
     app: pricing-web
@@ -32,7 +30,6 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: akka-cqrs
   name: pricing-web
   labels:
     app: pricing-web
