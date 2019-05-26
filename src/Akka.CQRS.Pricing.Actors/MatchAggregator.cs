@@ -100,14 +100,14 @@ namespace Akka.CQRS.Pricing.Actors
 
         private void RecoverAggregateData(MatchAggregatorSnapshot s)
         {
-            _matchAggregate = new MatchAggregate(TickerSymbol, s.AvgPrice, s.AvgVolume);
+            _matchAggregate = new MatchAggregate(TickerSymbol, s.RecentAvgPrice, s.RecentAvgVolume);
             _priceUpdates.Enqueue(s.RecentPriceUpdates.ToArray());
             _volumeUpdates.Enqueue(s.RecentVolumeUpdates.ToArray());
         }
 
         private MatchAggregatorSnapshot SaveAggregateData()
         {
-            return new MatchAggregatorSnapshot(_matchAggregate.AvgPrice.CurrentAvg, _matchAggregate.AvgVolume.CurrentAvg, _priceUpdates.ToList(), _volumeUpdates.ToList());
+            return new MatchAggregatorSnapshot(_matchAggregate.AvgPrice.CurrentAvg, _matchAggregate.AvgVolume.CurrentAvg, _priceUpdates.Cast<PriceChanged>().ToList(), _volumeUpdates.Cast<VolumeChanged>().ToList());
         }
 
         private void AwaitingSubscription()
@@ -182,7 +182,7 @@ namespace Akka.CQRS.Pricing.Actors
 
                 PersistAsync(SaveAggregateData(), snapshot =>
                 {
-                    _log.Info("Saved latest price {0} and volume {1}", snapshot.AvgPrice, snapshot.AvgVolume);
+                    _log.Info("Saved latest price {0} and volume {1}", snapshot.RecentAvgPrice, snapshot.RecentAvgVolume);
                     if (LastSequenceNr % SnapshotEveryN == 0)
                     {
                         SaveSnapshot(snapshot);
