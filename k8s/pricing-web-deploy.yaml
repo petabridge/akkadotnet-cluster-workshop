@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: pricing-web
+  namespace: akka-cqrs
   labels:
     app: pricing-web
 spec:
@@ -11,31 +12,34 @@ spec:
   selector:
     app: pricing-web
 ---
-- apiVersion: v1
-  kind: Service
-  metadata:
-    name: pricing-ui
-    labels:
-      app: pricing-web
-  spec:
-    ports:
-      - name: query-http
-        port: 8999
-        protocol: TCP
-        targetPort: 80
-    selector:
-      app: pricing-web
-    type: LoadBalancer
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: akka-cqrs
+  name: pricing-ui
+  labels:
+    app: pricing-web
+spec:
+  ports:
+    - name: query-http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: pricing-web
+  type: LoadBalancer
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: akka-cqrs
   name: pricing-web
   labels:
     app: pricing-web
 spec:
-  serviceName: pricing-web
-  replicas: 3
+  strategy:
+      type: Recreate
+  replicas: 2
   selector:
     matchLabels:
       app: pricing-web
@@ -58,7 +62,7 @@ spec:
             fieldRef:
               fieldPath: metadata.name
         - name: CLUSTER_IP
-          value: "$(POD_NAME).web-pricing"
+          value: "$(POD_NAME).pricing-web"
         - name: CLUSTER_SEEDS
           value: akka.tcp://AkkaTrader@pricing-0.pricing:5110,akka.tcp://AkkaTrader@pricing-1.pricing:5110,akka.tcp://AkkaTrader@pricing-2.pricing:5110
         livenessProbe:

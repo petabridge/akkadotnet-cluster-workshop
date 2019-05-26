@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: akka-cqrs
   name: pricing
   labels:
     app: pricing
@@ -14,12 +15,13 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  amespace: akka-cqrs
   name: pricing
   labels:
     app: pricing
 spec:
   serviceName: pricing
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: pricing

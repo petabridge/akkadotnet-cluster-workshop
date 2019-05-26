@@ -1,7 +1,13 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: akka-cqrs
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: lighthouse
+  namespace: akka-cqrs
   labels:
     app: lighthouse
 spec:
@@ -14,12 +20,13 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  namespace: akka-cqrs
   name: lighthouse
   labels:
     app: lighthouse
 spec:
   serviceName: lighthouse
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: lighthouse
