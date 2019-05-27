@@ -123,5 +123,47 @@ namespace Akka.CQRS.Matching.Tests
             snapshot.StockId.Should().Be(_matchingEngine.StockId);
             _matchingEngine.AskTrades.Count.Should().Be(2);
         }
+
+        [Fact(DisplayName = "Should recover matching engine from empty OrderbookSnapshot")]
+        public void ShouldRecreateFromEmptyOrderbookSnapshot()
+        {
+            var snapshot = new OrderbookSnapshot(TickerSymbol, DateTimeOffset.Now, 0.0d, 0.0d, new List<Order>(), new List<Order>());
+            var engine = MatchingEngine.FromSnapshot(snapshot);
+
+            var ask = new Ask(TickerSymbol, "foo", 12.0m, 5.0, DateTimeOffset.Now);
+
+            // bid is lower than ask - no trades
+            var bid = new Bid(TickerSymbol, "bar", 11.0m, 4.0, DateTimeOffset.Now);
+
+            // verify that engine still works normally
+            var bidEvents = engine.WithBid(bid);
+            var askEvents = engine.WithAsk(ask);
+            askEvents.Should().BeEmpty();
+            bidEvents.Should().BeEmpty();
+
+            engine.AskTrades.Count.Should().Be(1);
+            engine.BidTrades.Count.Should().Be(1);
+        }
+
+        [Fact(DisplayName = "Should recover matching engine from null OrderbookSnapshot")]
+        public void ShouldRecreateFromNullOrderbookSnapshot()
+        {
+            var snapshot = new OrderbookSnapshot(TickerSymbol, DateTimeOffset.Now, 0.0d, 0.0d, null, null);
+            var engine = MatchingEngine.FromSnapshot(snapshot);
+
+            var ask = new Ask(TickerSymbol, "foo", 12.0m, 5.0, DateTimeOffset.Now);
+
+            // bid is lower than ask - no trades
+            var bid = new Bid(TickerSymbol, "bar", 11.0m, 4.0, DateTimeOffset.Now);
+
+            // verify that engine still works normally
+            var bidEvents = engine.WithBid(bid);
+            var askEvents = engine.WithAsk(ask);
+            askEvents.Should().BeEmpty();
+            bidEvents.Should().BeEmpty();
+
+            engine.AskTrades.Count.Should().Be(1);
+            engine.BidTrades.Count.Should().Be(1);
+        }
     }
 }
