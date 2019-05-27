@@ -23,4 +23,4 @@ jobs:
     name: Windows
     vmImage: 'vs2017-win2016'
     scriptFileName: build.cmd
-    scriptArgs: 'RunTests phobos customNuGetSource=$(phobosNuGet)'
+    scriptArgs: 'RunTests customNuGetSource=$(phobosNuGet)'
