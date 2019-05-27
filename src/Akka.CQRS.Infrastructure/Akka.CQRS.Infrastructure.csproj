@@ -21,9 +21,10 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Phobos'">
-    <PackageReference Include="Phobos.Actor.Cluster" Version="$(PhobosVersion)" />
+     <!-- Uncomment these to install Phobos binaries -->
+    <!--<PackageReference Include="Phobos.Actor.Cluster" Version="$(PhobosVersion)" />
     <PackageReference Include="Phobos.Tracing.Jaeger" Version="$(PhobosTracingVersion)" />
-    <PackageReference Include="Phobos.Monitoring.StatsD" Version="$(PhobosMonitoringVersion)" />
+    <PackageReference Include="Phobos.Monitoring.StatsD" Version="$(PhobosMonitoringVersion)" />-->
   </ItemGroup>
 
   <ItemGroup>
