@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: statsd-agent
+  namespace: akka-cqrs
+  labels:
+    app: statsd
+spec:
+  ports:
+  - port: 8125
+    name: statsd-agent
+    protocol: UDP
+  - port: 8126
+    name: statsd-agent2
+    protocol: TCP
+  - port: 2003
+    name: graphite-1
+    protocol: TCP
+  - port: 2004
+    name: graphite-2
+    protocol: TCP
+  selector:
+    app: statsd
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: akka-cqrs
+  name: graphite-http
+  labels:
+    app: statsd
+spec:
+  ports:
+    - name: query-http
+      port: 8080
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: statsd
+  type: LoadBalancer
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  namespace: akka-cqrs
+  name: statsd
+  labels:
+    app: statsd
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: statsd
+    spec:
+      containers:
+      - name: statsd
+        image: graphiteapp/graphite-statsd
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        - containerPort: 8125
+          protocol: UDP
+        - containerPort: 8126
+          protocol: TCP
+        - containerPort: 2003
+          protocol: TCP
+        - containerPort: 2004
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: "/"
+            port: 80
+          initialDelaySeconds: 5

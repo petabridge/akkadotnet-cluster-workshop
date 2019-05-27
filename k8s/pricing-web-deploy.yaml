@@ -65,6 +65,14 @@ spec:
           value: "$(POD_NAME).pricing-web"
         - name: CLUSTER_SEEDS
           value: akka.tcp://AkkaTrader@pricing-0.pricing:5110,akka.tcp://AkkaTrader@pricing-1.pricing:5110,akka.tcp://AkkaTrader@pricing-2.pricing:5110
+          - name: ENABLE_PHOBOS
+          value: "true"
+        - name: STATSD_PORT
+          value: "8125"
+        - name: STATSD_URL
+          value: "statsd-agent"
+        - name: JAEGER_AGENT_HOST
+          value: "jaeger-agent"
         livenessProbe:
           tcpSocket:
             port: 16666
