@@ -5,6 +5,7 @@ using Akka.Persistence.Extras;
 
 namespace Akka.CQRS.Infrastructure
 {
+    /*
     /// <summary>
     /// Used to route sharding messages to order book actors hosted via Akka.Cluster.Sharding.
     /// </summary>
@@ -50,4 +51,5 @@ namespace Akka.CQRS.Infrastructure
             return null;
         }
     }
+    */
 }
