@@ -16,31 +16,6 @@ services:
     depends_on:
       - "mongo"
 
-  graphite:
-    image: graphiteapp/graphite-statsd
-    hostname: graphite
-    container_name: graphite
-    restart: always
-    ports:
-      - "0:80"
-
-  grafana:
-    image: grafana/grafana
-    restart: always
-    ports:
-      - '3000:3000'
-    links:
-        - graphite
-    environment:
-        - GF_SECURITY_ADMIN_PASSWORD=password
-
-  jaeger:
-    image: jaegertracing/all-in-one:1.6
-    hostname: jaeger
-    restart: always
-    ports:
-      - '16686:16686'
-
   lighthouse:
     image: petabridge/lighthouse:latest
     hostname: lighthouse
@@ -119,17 +94,3 @@ services:
     depends_on:
       - "mongo"
       - "lighthouse"
-
-  pricing-web:
-    image: akka.cqrs.pricing.web
-    ports:
-      - '8999:80'
-    environment:
-      CLUSTER_SEEDS: "akka.tcp://AkkaTrader@pricing-root:6055"
-      CLUSTER_PORT: 16666
-      STATSD_PORT: 8125
-      STATSD_URL: "graphite"
-      JAEGER_AGENT_HOST: "jaeger"
-    restart: on-failure
-    depends_on:
-      - "pricing-engine"
