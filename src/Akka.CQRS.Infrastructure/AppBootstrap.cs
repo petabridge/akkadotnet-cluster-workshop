@@ -6,7 +6,7 @@ using Akka.Cluster.Tools.Client;
 using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Configuration;
 using Akka.CQRS.Infrastructure.Ops;
-using Akka.CQRS.Serialization;
+//using Akka.CQRS.Serialization;
 using static Akka.CQRS.Infrastructure.MongoDbHoconHelper;
 using static Akka.CQRS.Infrastructure.Ops.OpsConfig;
 #if PHOBOS
@@ -42,7 +42,7 @@ namespace Akka.CQRS.Infrastructure
 
             config = config
                 .WithFallback(GetOpsConfig())
-                .WithFallback(TradeEventSerializer.Config)
+                //.WithFallback(TradeEventSerializer.Config)
                 //.WithFallback(ClusterSharding.DefaultConfig())
                 //.WithFallback(DistributedData.DistributedData.DefaultConfig()) // needed for DData sharding
                 //.WithFallback(ClusterClientReceptionist.DefaultConfig())
