@@ -27,11 +27,12 @@ namespace Akka.CQRS.Pricing.Service
         {
             var config = File.ReadAllText("app.conf");
             var conf = ConfigurationFactory.ParseString(config);
-
+            /*
             var actorSystem = ActorSystem.Create("AkkaTrader", conf.BoostrapApplication(new AppBootstrapConfig(true, true)));
-
+            
             var sharding = ClusterSharding.Get(actorSystem);
 
+            
             var shardRegion = sharding.Start("priceAggregator",
                 s => Props.Create(() => new MatchAggregator(s)),
                 ClusterShardingSettings.Create(actorSystem),
@@ -42,6 +43,7 @@ namespace Akka.CQRS.Pricing.Service
 
             // make ourselves available to ClusterClient at /user/subscriptions
             ClusterClientReceptionist.Get(actorSystem).RegisterService(clientHandler);
+            
 
             Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
             {
@@ -73,6 +75,7 @@ namespace Akka.CQRS.Pricing.Service
             pbm.Start();
 
             actorSystem.WhenTerminated.Wait();
+            */
             return 0;
         }
     }

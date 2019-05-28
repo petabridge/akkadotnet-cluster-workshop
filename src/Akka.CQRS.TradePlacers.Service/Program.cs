@@ -9,6 +9,7 @@ using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Configuration;
 using Akka.CQRS.Infrastructure;
 using Akka.CQRS.Infrastructure.Ops;
+using Akka.CQRS.Subscriptions.Actor;
 using Akka.CQRS.TradeProcessor.Actors;
 using Akka.Routing;
 using Akka.Util;
@@ -36,9 +37,8 @@ namespace Akka.CQRS.TradePlacers.Service
 
             Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
             {
-                var sharding = ClusterSharding.Get(actorSystem);
-
-                var shardRegionProxy = sharding.StartProxy("orderBook", "trade-processor", new StockShardMsgRouter());
+                var shardRegionProxy = tradeRouter;
+                var subManager = new ActorTradeSubscriptionManager(tradeRouter);
                 foreach (var stock in AvailableTickerSymbols.Symbols)
                 {
                     var max = (decimal)ThreadLocalRandom.Current.Next(20, 45);
@@ -48,13 +48,13 @@ namespace Akka.CQRS.TradePlacers.Service
                     // start bidders
                     foreach (var i in Enumerable.Repeat(1, ThreadLocalRandom.Current.Next(1, 6)))
                     {
-                        actorSystem.ActorOf(Props.Create(() => new BidderActor(stock, range, shardRegionProxy)));
+                        actorSystem.ActorOf(Props.Create(() => new BidderActor(subManager, stock, range, shardRegionProxy)));
                     }
 
                     // start askers
                     foreach (var i in Enumerable.Repeat(1, ThreadLocalRandom.Current.Next(1, 6)))
                     {
-                        actorSystem.ActorOf(Props.Create(() => new AskerActor(stock, range, shardRegionProxy)));
+                        actorSystem.ActorOf(Props.Create(() => new AskerActor(subManager, stock, range, shardRegionProxy)));
                     }
                 }
             });

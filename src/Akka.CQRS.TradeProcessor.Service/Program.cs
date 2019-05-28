@@ -20,13 +20,7 @@ namespace Akka.CQRS.TradeProcessor.Service
 
             var actorSystem = ActorSystem.Create("AkkaTrader", conf);
 
-            Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
-            {
-                var sharding = ClusterSharding.Get(actorSystem);
-
-                var shardRegion = sharding.Start("orderBook", s => OrderBookActor.PropsFor(s), ClusterShardingSettings.Create(actorSystem),
-                    new StockShardMsgRouter());
-            });
+            var orderBooks = actorSystem.ActorOf(Props.Create(() => new OrderBookMasterActor()), "orderbooks");
 
             // start Petabridge.Cmd (for external monitoring / supervision)
             var pbm = PetabridgeCmd.Get(actorSystem);
