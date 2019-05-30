@@ -11,7 +11,7 @@ open Fake.DocFxHelper
 
 // Information about the project for Nuget and Assembly info files
 let product = "Akka.CQRS"
-let configuration = "Release"
+let configuration = if hasBuildParam "phobos" then "Phobos" else "Release"
 
 // Metadata used when signing packages and DLLs
 let signingName = "My Library"
@@ -54,12 +54,20 @@ Target "AssemblyInfo" (fun _ ->
     XmlPokeInnerText "./src/common.props" "//Project/PropertyGroup/PackageReleaseNotes" (releaseNotes.Notes |> String.concat "\n")
 )
 
-Target "Build" (fun _ ->          
-    DotNetCli.Build
-        (fun p -> 
-            { p with
-                Project = solutionFile
-                Configuration = configuration }) // "Rebuild"  
+Target "RestorePackages" (fun _ ->
+    let customSource = getBuildParamOrDefault "customNuGetSource" ""
+
+    if(hasBuildParam "customNuGetSource") then
+        XmlPokeInnerText "./NuGet.config" "//add[@key='phobos']/@value" customSource
+)
+
+
+Target "Build" (fun _ ->      
+       DotNetCli.Build
+            (fun p -> 
+                { p with
+                    Project = solutionFile
+                    Configuration = configuration }) // "Rebuild"  
 )
 
 
@@ -93,8 +101,8 @@ Target "RunTests" (fun _ ->
     let runSingleProject project =
         let arguments =
             match (hasTeamCity) with
-            | true -> (sprintf "test -c Release --no-build --logger:trx --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none -teamcity" (outputTests))
-            | false -> (sprintf "test -c Release --no-build --logger:trx --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none" (outputTests))
+            | true -> (sprintf "test -c %s --no-build --logger:trx --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none -teamcity" configuration outputTests)
+            | false -> (sprintf "test -c %s --no-build --logger:trx --logger:\"console;verbosity=normal\" --results-directory %s -- -parallel none" configuration outputTests)
 
         let result = ExecProcess(fun info ->
             info.FileName <- "dotnet"
@@ -129,6 +137,38 @@ Target "NBench" <| fun _ ->
     
     projects |> Seq.iter runSingleProject
 
+//--------------------------------------------------------------------------------
+// Serialization
+//--------------------------------------------------------------------------------
+Target "Protobuf" <| fun _ ->
+
+    let protocPath =
+        if isWindows then findToolInSubPath "protoc.exe" "tools/Google.Protobuf.Tools/tools/windows_x64"
+        elif isMacOS then findToolInSubPath "protoc" "tools/Google.Protobuf.Tools/tools/macosx_x64"
+        else findToolInSubPath "protoc" "tools/Google.Protobuf.Tools/tools/linux_x64"
+
+    let protoFiles = [
+        ("Akka.Cqrs.proto", "/src/Akka.CQRS/Serialization/Proto/")
+        ("Akka.Cqrs.Pricing.proto", "/src/Akka.CQRS.Pricing/Serialization/Proto") ]
+
+    printfn "Using proto.exe: %s" protocPath
+
+    let runProtobuf assembly =
+        let protoName, destinationPath = assembly
+        let args = StringBuilder()
+                |> append (sprintf "-I=%s" (__SOURCE_DIRECTORY__ @@ "/src/protobuf/") )
+                |> append (sprintf "--csharp_out=internal_access:%s" (__SOURCE_DIRECTORY__ @@ destinationPath))
+                |> append "--csharp_opt=file_extension=.g.cs"
+                |> append (__SOURCE_DIRECTORY__ @@ "/src/protobuf" @@ protoName)
+                |> toText
+
+        let result = ExecProcess(fun info -> 
+            info.FileName <- protocPath
+            info.WorkingDirectory <- (Path.GetDirectoryName (FullName protocPath))
+            info.Arguments <- args) (System.TimeSpan.FromMinutes 45.0) (* Reasonably long-running task. *)
+        if result <> 0 then failwithf "protoc failed. %s %s" protocPath args
+    
+    protoFiles |> Seq.iter (runProtobuf)
 
 //--------------------------------------------------------------------------------
 // Code signing targets
@@ -234,7 +274,8 @@ Target "PublishNuget" (fun _ ->
 // Docker images
 //--------------------------------------------------------------------------------  
 Target "PublishCode" (fun _ ->    
-    let projects = !! "src/**/*.Service.csproj" // publish services only
+    let projects = !! "src/**/*.Service.csproj" // publish services  and web only
+                      ++ "src/**/*.Web.csproj"
 
     let runSingleProject project =
         DotNetCli.Publish
@@ -243,6 +284,7 @@ Target "PublishCode" (fun _ ->
                     Project = project
                     Configuration = configuration
                     VersionSuffix = overrideVersionSuffix project
+                    AdditionalArgs = ["--no-restore --output bin/Release/netcoreapp2.1/publish"] // would be ideal to change publish dir via MSBuild
                     })
 
     projects |> Seq.iter (runSingleProject)
@@ -253,6 +295,7 @@ let mapDockerImageName (projectName:string) =
     | "Akka.CQRS.TradeProcessor.Service" -> Some("akka.cqrs.tradeprocessor")
     | "Akka.CQRS.TradePlacers.Service" -> Some("akka.cqrs.traders")
     | "Akka.CQRS.Pricing.Service" -> Some("akka.cqrs.pricing")
+    | "Akka.CQRS.Pricing.Web" -> Some("akka.cqrs.pricing.web")
     | _ -> None
 
 Target "BuildDockerImages" (fun _ ->
@@ -364,7 +407,7 @@ Target "Docker" DoNothing
 Target "Nuget" DoNothing
 
 // build dependencies
-"Clean" ==> "AssemblyInfo" ==> "Build" ==> "BuildRelease"
+"Clean" ==> "AssemblyInfo" ==> "RestorePackages" ==> "Build" ==> "BuildRelease"
 
 // tests dependencies
 "Build" ==> "RunTests"
@@ -383,6 +426,6 @@ Target "Nuget" DoNothing
 "BuildRelease" ==> "All"
 "RunTests" ==> "All"
 "NBench" ==> "All"
-"Nuget" ==> "All"
+"Docker" ==> "All"
 
 RunTargetOrDefault "Help"

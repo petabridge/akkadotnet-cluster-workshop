@@ -11,7 +11,7 @@ namespace Akka.CQRS.Pricing.Events
     /// <summary>
     /// Used to signal a change in volume for a specific stock.
     /// </summary>
-    public interface IVolumeUpdate : IWithStockId, IComparable<IVolumeUpdate>
+    public interface IVolumeUpdate : IComparable<IVolumeUpdate>, IMarketEvent
     {
         /// <summary>
         /// The time of this price update.

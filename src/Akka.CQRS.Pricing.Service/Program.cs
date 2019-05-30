@@ -4,6 +4,7 @@ using System.Linq;
 using Akka.Actor;
 using Akka.Bootstrap.Docker;
 using Akka.Cluster.Sharding;
+using Akka.Cluster.Tools.Client;
 using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Cluster.Tools.Singleton;
 using Akka.Configuration;
@@ -11,9 +12,7 @@ using Akka.CQRS.Infrastructure;
 using Akka.CQRS.Infrastructure.Ops;
 using Akka.CQRS.Pricing.Actors;
 using Akka.CQRS.Pricing.Cli;
-using Akka.Persistence.MongoDb.Query;
-using Akka.Persistence.Query;
-using Akka.Util;
+using Akka.CQRS.Pricing.Commands;
 using Petabridge.Cmd.Cluster;
 using Petabridge.Cmd.Cluster.Sharding;
 using Petabridge.Cmd.Host;
@@ -26,44 +25,30 @@ namespace Akka.CQRS.Pricing.Service
     {
         static int Main(string[] args)
         {
-            var mongoConnectionString = Environment.GetEnvironmentVariable("MONGO_CONNECTION_STR")?.Trim();
-            if (string.IsNullOrEmpty(mongoConnectionString))
-            {
-                Console.WriteLine("ERROR! MongoDb connection string not provided. Can't start.");
-                return -1;
-            }
-            else
-            {
-                Console.WriteLine("Connecting to MongoDb at {0}", mongoConnectionString);
-            }
-
             var config = File.ReadAllText("app.conf");
-            var conf = ConfigurationFactory.ParseString(config).WithFallback(GetMongoHocon(mongoConnectionString))
-                .WithFallback(OpsConfig.GetOpsConfig())
-                .WithFallback(ClusterSharding.DefaultConfig())
-                .WithFallback(DistributedPubSub.DefaultConfig());
+            var conf = ConfigurationFactory.ParseString(config);
 
-            var actorSystem = ActorSystem.Create("AkkaPricing", conf.BootstrapFromDocker());
-            var readJournal = actorSystem.ReadJournalFor<MongoDbReadJournal>(MongoDbReadJournal.Identifier);
-            var priceViewMaster = actorSystem.ActorOf(Props.Create(() => new PriceViewMaster()), "prices");
+            var actorSystem = ActorSystem.Create("AkkaTrader", conf.BoostrapApplication(new AppBootstrapConfig(true, true)));
+
+            var sharding = ClusterSharding.Get(actorSystem);
+
+            var shardRegion = sharding.Start("priceAggregator",
+                s => Props.Create(() => new MatchAggregator(s)),
+                ClusterShardingSettings.Create(actorSystem),
+                new StockShardMsgRouter());
+
+            var clientHandler =
+                actorSystem.ActorOf(Props.Create(() => new ClientHandlerActor(shardRegion)), "subscriptions");
+
+            // make ourselves available to ClusterClient at /user/subscriptions
+            ClusterClientReceptionist.Get(actorSystem).RegisterService(clientHandler);
 
             Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
             {
-                var sharding = ClusterSharding.Get(actorSystem);
-
-                var shardRegion = sharding.Start("priceAggregator",
-                    s => Props.Create(() => new MatchAggregator(s, readJournal)),
-                    ClusterShardingSettings.Create(actorSystem),
-                    new StockShardMsgRouter());
-
-                // used to seed pricing data
-                var singleton = ClusterSingletonManager.Props(
-                    Props.Create(() => new PriceInitiatorActor(readJournal, shardRegion)),
-                    ClusterSingletonManagerSettings.Create(
-                        actorSystem.Settings.Config.GetConfig("akka.cluster.price-singleton")));
-
-                // start the creation of the pricing views
-                priceViewMaster.Tell(new PriceViewMaster.BeginTrackPrices(shardRegion));
+                foreach (var ticker in AvailableTickerSymbols.Symbols)
+                {
+                    shardRegion.Tell(new Ping(ticker));
+                }
             });
 
             // start Petabridge.Cmd (for external monitoring / supervision)
@@ -84,7 +69,7 @@ namespace Akka.CQRS.Pricing.Service
             RegisterPalette(ClusterCommands.Instance);
             RegisterPalette(RemoteCommands.Instance);
             RegisterPalette(ClusterShardingCommands.Instance);
-            RegisterPalette(new PriceCommands(priceViewMaster));
+            RegisterPalette(new PriceCommands(shardRegion));
             pbm.Start();
 
             actorSystem.WhenTerminated.Wait();

@@ -1,0 +1,91 @@
+﻿@{
+    ViewData["Title"] = "Akka.CQRS.Pricing Home";
+}
+
+<div class="row">
+    <h1>Live Stock Market Data</h1>
+    <div class="well" id="output">
+        <!-- ko foreach: messages -->
+        <p data-bind="text:message"></p>
+        <!-- /ko -->
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <h2>Application uses</h2>
+        <ul>
+            <li>Sample pages using ASP.NET Core MVC</li>
+            <li>Theming using <a href="https://go.microsoft.com/fwlink/?LinkID=398939">Bootstrap</a></li>
+        </ul>
+    </div>
+    <div class="col-md-3">
+        <h2>How to</h2>
+        <ul>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398600">Add a Controller and View</a></li>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699315">Manage User Secrets using Secret Manager.</a></li>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699316">Use logging to log a message.</a></li>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699317">Add packages using NuGet.</a></li>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699319">Target development, staging or production environment.</a></li>
+        </ul>
+    </div>
+    <div class="col-md-3">
+        <h2>Overview</h2>
+        <ul>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkId=518008">Conceptual overview of what is ASP.NET Core</a></li>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699320">Fundamentals of ASP.NET Core such as Startup and middleware.</a></li>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398602">Working with Data</a></li>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398603">Security</a></li>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699321">Client side development</a></li>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699322">Develop on different platforms</a></li>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699323">Read more on the documentation site</a></li>
+        </ul>
+    </div>
+    <div class="col-md-3">
+        <h2>Run &amp; Deploy</h2>
+        <ul>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517851">Run your app</a></li>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517853">Run tools such as EF migrations and more</a></li>
+            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398609">Publish to Microsoft Azure Web Apps</a></li>
+        </ul>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="/lib/signalr/signalr.js"></script>
+    <script src="/lib/knockoutjs/knockout-3.3.0.js"></script>
+    <script>
+        function StreamViewModel() {
+            var self = this;
+
+            self.messages = ko.observableArray([]);
+
+            self.addMessage = function(message) {
+                self.messages.unshift({ message: message });
+                if (self.messages().length > 20) {
+                    self.messages.pop(); // create circular-buffer-like behavior
+                }
+            };
+        }
+
+        var stream = new StreamViewModel();
+        ko.applyBindings(stream);
+
+        $(function() {
+            // Reference the auto-generated proxy for the hub.
+            var stocks = new signalR.HubConnectionBuilder().withUrl("/hubs/stockHub").build();
+            // Create a function that the hub can call back to display messages.
+            stocks.on("writeEvent",
+                function(message) {
+                    stream.addMessage(message);
+                });
+
+
+            stocks.start().then(function () {
+
+            });
+        });
+    </script>
+
+}

@@ -24,7 +24,7 @@ namespace Akka.CQRS.Subscriptions.Tests.DistributedPubSub
 
         public Address SelfAddress => Cluster.Cluster.Get(Sys).SelfAddress;
 
-        [Fact(DisplayName = "Should be able to subscribe and publish to trade event topics.")]
+        [Fact(DisplayName = "[DistributedPubSubTradeEventSubscriptionManager] Should be able to subscribe and publish to trade event topics.")]
         public async Task ShouldSubscribeAndPublishToTradeEventTopics()
         {
             // Join the cluster
@@ -41,7 +41,7 @@ namespace Akka.CQRS.Subscriptions.Tests.DistributedPubSub
 
             // Subscribe to all topics
             var subAck = await subManager.Subscribe("MSFT", TestActor);
-            subAck.TickerSymbol.Should().Be("MSFT");
+            subAck.StockId.Should().Be("MSFT");
 
             var bid = new Bid("MSFT", "foo", 10.0m, 1.0d, DateTimeOffset.UtcNow);
             published.Publish("MSFT", bid);

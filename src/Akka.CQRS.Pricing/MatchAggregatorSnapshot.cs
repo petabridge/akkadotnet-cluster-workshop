@@ -10,30 +10,24 @@ namespace Akka.CQRS.Pricing
     /// </summary>
     public sealed class MatchAggregatorSnapshot
     {
-        public MatchAggregatorSnapshot(long queryOffset, decimal avgPrice, double avgVolume, 
-            IReadOnlyList<IPriceUpdate> recentPriceUpdates, IReadOnlyList<IVolumeUpdate> recentVolumeUpdates)
+        public MatchAggregatorSnapshot(decimal avgPrice, double avgVolume, 
+            IReadOnlyList<PriceChanged> recentPriceUpdates, IReadOnlyList<VolumeChanged> recentVolumeUpdates)
         {
-            QueryOffset = queryOffset;
-            AvgPrice = avgPrice;
-            AvgVolume = avgVolume;
+            RecentAvgPrice = avgPrice;
+            RecentAvgVolume = avgVolume;
             RecentPriceUpdates = recentPriceUpdates;
             RecentVolumeUpdates = recentVolumeUpdates;
         }
 
         /// <summary>
-        /// The sequence number of the Akka.Persistence.Query object to begin reading from.
-        /// </summary>
-        public long QueryOffset { get; }
-
-        /// <summary>
         /// The most recently saved average price.
         /// </summary>
-        public decimal AvgPrice { get; }
+        public decimal RecentAvgPrice { get; }
 
         /// <summary>
         /// The most recently saved average volume.
         /// </summary>
-        public double AvgVolume { get; }
+        public double RecentAvgVolume { get; }
 
         public IReadOnlyList<IPriceUpdate> RecentPriceUpdates { get; }
 

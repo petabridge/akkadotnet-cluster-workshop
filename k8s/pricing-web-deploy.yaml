@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pricing-web
+  namespace: akka-cqrs
+  labels:
+    app: pricing-web
+spec:
+  clusterIP: None
+  ports:
+  - port: 16666
+  selector:
+    app: pricing-web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: akka-cqrs
+  name: pricing-ui
+  labels:
+    app: pricing-web
+spec:
+  ports:
+    - name: query-http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: pricing-web
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: akka-cqrs
+  name: pricing-web
+  labels:
+    app: pricing-web
+spec:
+  strategy:
+      type: Recreate
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pricing-web
+  template:
+    metadata:
+      labels:
+        app: pricing-web
+    spec:
+      terminationGracePeriodSeconds: 35
+      containers:
+      - name: pricing-web
+        image: akka.cqrs.pricing.web:0.1.0
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "pbm 127.0.0.1:9110 cluster leave"]
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: CLUSTER_IP
+          value: "$(POD_NAME).pricing-web"
+        - name: CLUSTER_SEEDS
+          value: akka.tcp://AkkaTrader@pricing-0.pricing:5110,akka.tcp://AkkaTrader@pricing-1.pricing:5110,akka.tcp://AkkaTrader@pricing-2.pricing:5110
+        - name: ENABLE_PHOBOS
+          value: "true"
+        - name: STATSD_PORT
+          value: "8125"
+        - name: STATSD_URL
+          value: "statsd-agent"
+        - name: JAEGER_AGENT_HOST
+          value: "jaeger-agent"
+        livenessProbe:
+          tcpSocket:
+            port: 16666
+        readinessProbe:
+          httpGet:
+            path: "/"
+            port: 80
+          initialDelaySeconds: 5
+        ports:
+        - containerPort: 16666
+          protocol: TCP
+        - containerPort: 80
+          protocol: TCP

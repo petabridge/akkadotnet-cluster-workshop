@@ -3,12 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Petabridge.Cmd palettes for accessing the pricing system.</Description>
+    <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Petabridge.Cmd.Host" Version="0.6.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Akka.CQRS.Pricing.Subscriptions\Akka.CQRS.Pricing.Subscriptions.csproj" />
     <ProjectReference Include="..\Akka.CQRS.Pricing\Akka.CQRS.Pricing.csproj" />
   </ItemGroup>
 

@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: akka-cqrs
+  name: trade-processor
+  labels:
+    app: trade-processor
+spec:
+  clusterIP: None
+  ports:
+  - port: 5110
+  selector:
+    app: trade-processor
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: akka-cqrs
+  name: trade-processor
+  labels:
+    app: trade-processor
+spec:
+  serviceName: trade-processor
+  replicas: 2
+  selector:
+    matchLabels:
+      app: trade-processor
+  template:
+    metadata:
+      labels:
+        app: trade-processor
+    spec:
+      terminationGracePeriodSeconds: 35
+      containers:
+      - name: trade-processor
+        image: akka.cqrs.tradeprocessor:0.1.0
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "pbm 127.0.0.1:9110 cluster leave"]
+        env:
+        - name: ACTORSYSTEM
+          value: AkkaTrader
+        - name: ENABLE_PHOBOS
+          value: "true"
+        - name: MONGO_CONNECTION_STR
+          value: "mongodb://mongodb:27017/akkaTrader"
+        - name: STATSD_PORT
+          value: "8125"
+        - name: STATSD_URL
+          value: "statsd-agent"
+        - name: JAEGER_AGENT_HOST
+          value: "jaeger-agent"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: CLUSTER_IP
+          value: "$(POD_NAME).trade-processor"
+        - name: CLUSTER_PORT
+          value: "5110"
+        - name: CLUSTER_SEEDS
+          value: akka.tcp://$(ACTORSYSTEM)@lighthouse-0.lighthouse:4053,akka.tcp://$(ACTORSYSTEM)@lighthouse-1.lighthouse:4053,akka.tcp://$(ACTORSYSTEM)@lighthouse-2.lighthouse:4053
+        livenessProbe:
+          tcpSocket:
+            port: 5110
+        ports:
+        - containerPort: 5110
+          protocol: TCP

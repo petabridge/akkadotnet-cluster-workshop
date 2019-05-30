@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
     <Description>Read-side pricing aggregates and views.</Description>
+    <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Petabridge.Collections" Version="1.0.0" />

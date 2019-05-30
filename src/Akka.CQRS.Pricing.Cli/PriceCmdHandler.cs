@@ -11,12 +11,12 @@ namespace Akka.CQRS.Pricing.Cli
     /// </summary>
     public sealed class PriceCommands : CommandPaletteHandler
     {
-        private IActorRef _priceViewMaster;
+        private IActorRef _matchAggregatorRouter;
 
-        public PriceCommands(IActorRef priceViewMaster) : base(PricingCommandPalette)
+        public PriceCommands(IActorRef matchAggregatorRouter) : base(PricingCommandPalette)
         {
-            _priceViewMaster = priceViewMaster;
-            HandlerProps = Props.Create(() => new PriceCmdRouter(_priceViewMaster));
+            _matchAggregatorRouter = matchAggregatorRouter;
+            HandlerProps = Props.Create(() => new PriceCmdRouter(_matchAggregatorRouter));
         }
 
         public override Props HandlerProps { get; }

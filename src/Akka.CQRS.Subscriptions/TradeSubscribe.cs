@@ -5,16 +5,16 @@ namespace Akka.CQRS.Subscriptions
     /// <summary>
     /// Subscribe to trade events for the specified ticker symbol.
     /// </summary>
-    public sealed class TradeSubscribe
+    public sealed class TradeSubscribe : IWithStockId
     {
-        public TradeSubscribe(string tickerSymbol, TradeEventType[] events, IActorRef subscriber)
+        public TradeSubscribe(string stockId, TradeEventType[] events, IActorRef subscriber)
         {
-            TickerSymbol = tickerSymbol;
+            StockId = stockId;
             Events = events;
             Subscriber = subscriber;
         }
 
-        public string TickerSymbol { get; }
+        public string StockId { get; }
 
         public TradeEventType[] Events { get; }
 

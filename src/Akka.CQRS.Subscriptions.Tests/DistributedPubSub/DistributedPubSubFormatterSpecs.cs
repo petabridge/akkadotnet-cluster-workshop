@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FluentAssertions;
-using static Akka.CQRS.Subscriptions.DistributedPubSub.DistributedPubSubTopicFormatter;
+using static Akka.CQRS.Subscriptions.DistributedPubSub.DistributedPubSubTradeEventTopicFormatter;
 using Xunit;
 
 namespace Akka.CQRS.Subscriptions.Tests.DistributedPubSub

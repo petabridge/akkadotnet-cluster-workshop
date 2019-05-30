@@ -13,7 +13,7 @@ namespace Akka.CQRS.Subscriptions.Tests
         {
             yield return new object[] {new Ask("foo", "foo", 10.0m, 1.0d, DateTimeOffset.UtcNow), TradeEventType.Ask};
             yield return new object[] { new Bid("foo", "foo", 10.0m, 1.0d, DateTimeOffset.UtcNow), TradeEventType.Bid };
-            yield return new object[] { new Fill("foo", 1.0d, 10.0m, "bar", DateTimeOffset.UtcNow), TradeEventType.Fill };
+            yield return new object[] { new Fill("foo", "foo", 1.0d, 10.0m, "fuber", DateTimeOffset.UtcNow), TradeEventType.Fill };
             yield return new object[] { new Match("foo", "bar", "fuber", 10.0m, 1.0d, DateTimeOffset.UtcNow), TradeEventType.Match };
 
         }

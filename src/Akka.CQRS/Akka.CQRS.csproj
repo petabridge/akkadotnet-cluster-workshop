@@ -4,9 +4,19 @@
   <PropertyGroup>
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
     <Description>Core messages, domain events, and infrastructure.</Description>
+    <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Serialization\TradeEventSerializer.conf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Serialization\TradeEventSerializer.conf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Akka" Version="$(AkkaVersion)" />
+    <PackageReference Include="Google.Protobuf" Version="$(GoogleProtobufVersion)" />
   </ItemGroup>
 </Project>

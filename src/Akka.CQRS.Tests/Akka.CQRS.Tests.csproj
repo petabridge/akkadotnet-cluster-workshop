@@ -2,10 +2,12 @@
   <Import Project="..\common.props" />
 
   <PropertyGroup>    
-    <TargetFramework>$(NetCoreVersion)</TargetFramework>
+    <TargetFramework>$(NetCoreVersion)</TargetFramework>    
+    <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Akka.TestKit.Xunit2" Version="$(AkkaVersion)" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)" />
     <PackageReference Include="xunit" Version="$(XunitVersion)" />
     <PackageReference Include="xunit.runner.visualstudio" Version="$(XunitVersion)" />

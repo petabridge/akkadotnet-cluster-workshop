@@ -1,18 +1,13 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Akka.Actor;
-using Akka.Bootstrap.Docker;
 using Akka.Cluster.Sharding;
-using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Configuration;
 using Akka.CQRS.Infrastructure;
-using Akka.CQRS.Infrastructure.Ops;
 using Akka.CQRS.TradeProcessor.Actors;
 using Petabridge.Cmd.Cluster;
 using Petabridge.Cmd.Cluster.Sharding;
 using Petabridge.Cmd.Host;
 using Petabridge.Cmd.Remote;
-using static Akka.CQRS.Infrastructure.MongoDbHoconHelper;
 
 namespace Akka.CQRS.TradeProcessor.Service
 {
@@ -20,24 +15,10 @@ namespace Akka.CQRS.TradeProcessor.Service
     {
         static int Main(string[] args)
         {
-            var mongoConnectionString = Environment.GetEnvironmentVariable("MONGO_CONNECTION_STR")?.Trim();
-            if (string.IsNullOrEmpty(mongoConnectionString))
-            {
-                Console.WriteLine("ERROR! MongoDb connection string not provided. Can't start.");
-                return -1;
-            }
-            else
-            {
-                Console.WriteLine("Connecting to MongoDb at {0}", mongoConnectionString);
-            }
+          var config = File.ReadAllText("app.conf");
+            var conf = ConfigurationFactory.ParseString(config).BoostrapApplication(new AppBootstrapConfig(true, true));
 
-            var config = File.ReadAllText("app.conf");
-            var conf = ConfigurationFactory.ParseString(config).WithFallback(GetMongoHocon(mongoConnectionString))
-                .WithFallback(OpsConfig.GetOpsConfig())
-                .WithFallback(ClusterSharding.DefaultConfig())
-                .WithFallback(DistributedPubSub.DefaultConfig());
-
-            var actorSystem = ActorSystem.Create("AkkaTrader", conf.BootstrapFromDocker());
+            var actorSystem = ActorSystem.Create("AkkaTrader", conf);
 
             Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
             {

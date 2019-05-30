@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>$(NetStandardVersion)</TargetFramework>
+    <Description>Pub-sub abstractions for pricing events.</Description>
+    <Configurations>Debug;Release;Phobos</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Akka.Cluster.Tools" Version="$(AkkaVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Akka.CQRS.Pricing\Akka.CQRS.Pricing.csproj" />
+  </ItemGroup>
+</Project>

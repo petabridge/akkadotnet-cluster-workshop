@@ -5,6 +5,8 @@ trigger:
     include:
       - dev
       - master
+      - lesson*
+      - start
 
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
@@ -19,4 +21,4 @@ jobs:
     name: Ubuntu
     vmImage: 'ubuntu-16.04'
     scriptFileName: ./build.sh
-    scriptArgs: all
+    scriptArgs: 'all customNuGetSource=$(phobosNuGet)'

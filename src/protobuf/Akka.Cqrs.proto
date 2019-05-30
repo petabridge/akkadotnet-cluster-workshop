@@ -1,0 +1,78 @@
+syntax = "proto3";
+package Akka.CQRS.Serialization.Msgs;
+
+enum TradeEvent{
+	BID = 0;
+	ASK = 1;
+	FILL = 2;
+	MATCH = 3;	
+}
+
+/* Trading events */
+message Bid{
+	string orderId = 1;
+	string stockId = 2;
+	double quantity = 3;
+	double price = 4; /* normally a decimal in C# - might have loss of precision here */
+	int64 timeIssued = 5;
+}
+
+message Ask{
+	string orderId = 1;
+	string stockId = 2;
+	double quantity = 3;
+	double price = 4; /* normally a decimal in C# - might have loss of precision here */
+	int64 timeIssued = 5;
+}
+
+message Fill{
+	string orderId = 1;
+	string stockId = 2;
+	double quantity = 3;
+	double price = 4; /* normally a decimal in C# - might have loss of precision here */
+	int64 timeIssued = 5;
+	string filledById = 6;
+	bool partialFill = 7;
+}
+
+message Match{
+	string stockId = 1;
+	string buyOrderId = 2;
+	string sellOrderId = 3;
+	double quantity = 4;
+	double price = 5; /* normally a decimal in C# - might have loss of precision here */
+	int64 timeIssued = 6;
+}
+
+/* used in Order structs */
+enum TradeSide{
+	BUY = 0;
+	SELL = 1;
+}
+
+message Order{
+	string orderId = 1;
+	string stockId = 2;
+	TradeSide side = 3;
+	double quantity = 4;
+	double price = 5; /* normally a decimal in C# - might have loss of precision here */
+	int64 timeIssued = 6;
+	repeated Fill fills = 16;
+}
+
+message OrderbookSnapshot{
+	string stockId = 1;
+	int64 timeIssued = 2;
+	double askQuantity = 3;
+	double bidQuantity = 4;
+	repeated Order asks = 5;
+	repeated Order bids = 6;
+}
+
+message GetOrderbookSnapshot{
+	string stockId = 1;
+}
+
+message GetRecentMatches{
+	string stockId = 1;
+}

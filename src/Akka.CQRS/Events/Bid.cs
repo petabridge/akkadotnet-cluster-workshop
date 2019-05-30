@@ -28,5 +28,29 @@ namespace Akka.CQRS.Events
 
         public DateTimeOffset TimeIssued { get; }
         public string OrderId { get; }
+
+        private bool Equals(Bid other)
+        {
+            return string.Equals(StockId, other.StockId) && BidPrice == other.BidPrice && BidQuantity.Equals(other.BidQuantity) && string.Equals(OrderId, other.OrderId);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj is Bid other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = StockId.GetHashCode();
+                hashCode = (hashCode * 397) ^ BidPrice.GetHashCode();
+                hashCode = (hashCode * 397) ^ BidQuantity.GetHashCode();
+                hashCode = (hashCode * 397) ^ OrderId.GetHashCode();
+                return hashCode;
+            }
+        }
     }
 }

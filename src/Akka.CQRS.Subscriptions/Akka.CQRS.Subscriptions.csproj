@@ -3,7 +3,8 @@
 
   <PropertyGroup>
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
-    <Description>Pub-sub abstractions</Description>
+    <Description>Pub-sub abstractions for trade events.</Description>
+    <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

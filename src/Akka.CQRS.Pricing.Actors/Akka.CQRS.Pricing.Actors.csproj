@@ -3,14 +3,15 @@
   <PropertyGroup>
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
     <Description>Pricing analytics actors.</Description>
+    <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Akka.Persistence.Query" Version="$(AkkaVersion)" />
     <PackageReference Include="Akka.Persistence.Extras" Version="$(AkkaPersistenceExtrasVersion)" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Akka.CQRS.Pricing.Subscriptions\Akka.CQRS.Pricing.Subscriptions.csproj" />
     <ProjectReference Include="..\Akka.CQRS.Pricing\Akka.CQRS.Pricing.csproj" />
     <ProjectReference Include="..\Akka.CQRS.Subscriptions\Akka.CQRS.Subscriptions.csproj" />
   </ItemGroup>

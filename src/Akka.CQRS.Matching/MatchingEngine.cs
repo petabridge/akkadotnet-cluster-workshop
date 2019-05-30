@@ -61,8 +61,11 @@ namespace Akka.CQRS.Matching
         /// <returns>A new matching engine.</returns>
         public static MatchingEngine FromSnapshot(OrderbookSnapshot snapshot, ILoggingAdapter log = null, ITimestamper timestamper = null)
         {
-            return new MatchingEngine(snapshot.StockId, snapshot.Bids.ToDictionary(x => x.OrderId, y=> y), 
-                snapshot.Asks.ToDictionary(x => x.OrderId, y => y), log, timestamper);
+            return new MatchingEngine(snapshot.StockId, new Dictionary<string, Order>(), 
+               new Dictionary<string, Order>(), log, timestamper);
+            // MongoDb serialization CANNOT handle this object for reasons unknown
+            //return new MatchingEngine(snapshot.StockId, snapshot.Bids?.ToDictionary(x => x.OrderId, y=> y) ?? new Dictionary<string, Order>(), 
+            //    snapshot.Asks?.ToDictionary(x => x.OrderId, y => y) ?? new Dictionary<string, Order>(), log, timestamper);
         }
 
         /// <summary>
