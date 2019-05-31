@@ -1,3 +1,7 @@
+#### 0.1.2 May 31 2019 ####
+*Reorganized pricing and pricing-processor Dockerfiles to comport with Docker best practices.
+* Enabled Phobos.
+
 #### 0.1.1 May 31 2019 ####
 *Reorganized trader and trade-processor Dockerfiles to comport with Docker best practices.
 
