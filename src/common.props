@@ -1,9 +1,10 @@
 <Project>
   <PropertyGroup>
-    <Copyright>Copyright © 2017 Your Company</Copyright>
-    <Authors>Your Authors</Authors>
-    <VersionPrefix>0.1.1</VersionPrefix>
-    <PackageReleaseNotes>Reorganized trader and trade-processor Dockerfiles to comport with Docker best practices.</PackageReleaseNotes>
+    <Copyright>Copyright © 2015-2019 Petabridge</Copyright>
+    <Authors>Petabridge</Authors>
+    <VersionPrefix>0.1.2</VersionPrefix>
+    <PackageReleaseNotes>Reorganized pricing and pricing-processor Dockerfiles to comport with Docker best practices.
+Enabled Phobos.</PackageReleaseNotes>
     <PackageIconUrl>
     </PackageIconUrl>
     <PackageProjectUrl>
