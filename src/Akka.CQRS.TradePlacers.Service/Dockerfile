@@ -6,8 +6,6 @@ ENV CLUSTER_SEEDS "[]"
 ENV CLUSTER_IP ""
 ENV CLUSTER_PORT "5054"
 
-COPY ./bin/Release/netcoreapp2.1/publish/ /app
-
 # 9110 - Petabridge.Cmd
 # 5055 - Akka.Cluster
 EXPOSE 9110 5054
@@ -19,5 +17,7 @@ RUN dotnet tool install --global pbm
 ENV PATH="${PATH}:/root/.dotnet/tools"
 
 # RUN pbm help
+
+COPY ./bin/Release/netcoreapp2.1/publish/ /app
 
 CMD ["dotnet", "Akka.CQRS.TradePlacers.Service.dll"]
