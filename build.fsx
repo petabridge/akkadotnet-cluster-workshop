@@ -274,6 +274,7 @@ Target "PublishNuget" (fun _ ->
 // Docker images
 //--------------------------------------------------------------------------------  
 Target "PublishCode" (fun _ ->    
+    ActivateFinalTarget "KillCreatedProcesses"
     let projects = !! "src/**/*.Service.csproj" // publish services  and web only
                       ++ "src/**/*.Web.csproj"
 
