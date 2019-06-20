@@ -19,4 +19,12 @@ ENV PATH="${PATH}:/root/.dotnet/tools"
 
 COPY ./bin/Release/netcoreapp2.1/publish/ /app
 
+FROM microsoft/dotnet:2.1-runtime AS app
+WORKDIR /app
+
+COPY --from=base /app /app
+
+# copy .NET Core global tool
+COPY --from=base /root/.dotnet /root/.dotnet/
+
 CMD ["dotnet", "Akka.CQRS.TradeProcessor.Service.dll"]
