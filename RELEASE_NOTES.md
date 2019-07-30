@@ -1,3 +1,7 @@
+#### 0.1.4 July 29 2019 ####
+* Fixed issue with `pbm` not being found on the PATH inside Docker containers.
+* Fixed ASP.NET Core base image for Akka.CQRS.Pricing.Web.
+
 #### 0.1.3 June 20 2019 ####
 * Condensed Docker images to 1/10 previous size using `dotnet-runtime` base image.
 
