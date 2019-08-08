@@ -33,7 +33,7 @@ spec:
       terminationGracePeriodSeconds: 35
       containers:
       - name: traders
-        image: akka.cqrs.traders:0.1.2
+        image: akka.cqrs.traders:0.1.3
         lifecycle:
           preStop:
             exec:
