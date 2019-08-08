@@ -33,7 +33,7 @@ spec:
       terminationGracePeriodSeconds: 35
       containers:
       - name: pricing
-        image: akka.cqrs.pricing:0.1.3
+        image: akka.cqrs.pricing:0.1.4
         lifecycle:
           preStop:
             exec:
