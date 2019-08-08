@@ -332,9 +332,12 @@ Target "BuildDockerImages" (fun _ ->
                     |> append "."
                     |> toText
 
+        let composedGetDirName (p:string) =
+            System.IO.Path.GetDirectoryName p
+
         ExecProcess(fun info -> 
                 info.FileName <- "docker"
-                info.WorkingDirectory <- (System.IO.Path.GetDirectoryName (projectPath))
+                info.WorkingDirectory <- composedGetDirName projectPath
                 info.Arguments <- args) (System.TimeSpan.FromMinutes 5.0) (* Reasonably long-running task. *)
 
     let runSingleProject project =
