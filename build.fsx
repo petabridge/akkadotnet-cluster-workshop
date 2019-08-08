@@ -164,7 +164,7 @@ Target "Protobuf" <| fun _ ->
 
         let result = ExecProcess(fun info -> 
             info.FileName <- protocPath
-            info.WorkingDirectory <- (Path.GetDirectoryName (FullName protocPath))
+            info.WorkingDirectory <- (Path.GetDirectoryName (FullName protocPath):string)
             info.Arguments <- args) (System.TimeSpan.FromMinutes 45.0) (* Reasonably long-running task. *)
         if result <> 0 then failwithf "protoc failed. %s %s" protocPath args
     
@@ -334,7 +334,7 @@ Target "BuildDockerImages" (fun _ ->
 
         ExecProcess(fun info -> 
                 info.FileName <- "docker"
-                info.WorkingDirectory <- Path.GetDirectoryName projectPath
+                info.WorkingDirectory <- Path.GetDirectoryName projectPath:string
                 info.Arguments <- args) (System.TimeSpan.FromMinutes 5.0) (* Reasonably long-running task. *)
 
     let runSingleProject project =
