@@ -2,9 +2,9 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2019 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.1.2</VersionPrefix>
-    <PackageReleaseNotes>Reorganized pricing and pricing-processor Dockerfiles to comport with Docker best practices.
-Enabled Phobos.</PackageReleaseNotes>
+    <VersionPrefix>0.1.4</VersionPrefix>
+    <PackageReleaseNotes>Fixed issue with `pbm` not being found on the PATH inside Docker containers.
+Fixed ASP.NET Core base image for Akka.CQRS.Pricing.Web.</PackageReleaseNotes>
     <PackageIconUrl>
     </PackageIconUrl>
     <PackageProjectUrl>

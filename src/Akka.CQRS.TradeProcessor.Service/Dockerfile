@@ -14,9 +14,17 @@ EXPOSE 9110 5055
 # Install Petabridge.Cmd client
 RUN dotnet tool install --global pbm 
 
+COPY ./bin/Release/netcoreapp2.1/publish/ /app
+
+FROM microsoft/dotnet:2.1-runtime AS app
+WORKDIR /app
+
+COPY --from=base /app /app
+
+# copy .NET Core global tool
+COPY --from=base /root/.dotnet /root/.dotnet/
+
 # Needed because https://stackoverflow.com/questions/51977474/install-dotnet-core-tool-dockerfile
 ENV PATH="${PATH}:/root/.dotnet/tools"
-
-COPY ./bin/Release/netcoreapp2.1/publish/ /app
 
 CMD ["dotnet", "Akka.CQRS.TradeProcessor.Service.dll"]
