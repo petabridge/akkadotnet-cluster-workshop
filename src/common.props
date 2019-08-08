@@ -2,8 +2,9 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2019 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.1.3</VersionPrefix>
-    <PackageReleaseNotes>Condensed Docker images to 1/10 previous size using `dotnet-runtime` base image.</PackageReleaseNotes>
+    <VersionPrefix>0.1.4</VersionPrefix>
+    <PackageReleaseNotes>Fixed issue with `pbm` not being found on the PATH inside Docker containers.
+Fixed ASP.NET Core base image for Akka.CQRS.Pricing.Web.</PackageReleaseNotes>
     <PackageIconUrl>
     </PackageIconUrl>
     <PackageProjectUrl>
