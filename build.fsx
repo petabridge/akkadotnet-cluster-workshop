@@ -334,7 +334,7 @@ Target "BuildDockerImages" (fun _ ->
 
         ExecProcess(fun info -> 
                 info.FileName <- "docker"
-                info.WorkingDirectory <- Path.GetDirectoryName projectPath:string
+                info.WorkingDirectory <- (Path.GetDirectoryName projectPath:string)
                 info.Arguments <- args) (System.TimeSpan.FromMinutes 5.0) (* Reasonably long-running task. *)
 
     let runSingleProject project =
