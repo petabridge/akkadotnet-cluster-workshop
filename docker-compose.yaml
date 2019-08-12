@@ -60,3 +60,6 @@ services:
     restart: on-failure
     depends_on:
       - "lighthouse"
+      ENABLE_PHOBOS: "true"
+      ENABLE_PHOBOS: "true"
+      ENABLE_PHOBOS: "true"
