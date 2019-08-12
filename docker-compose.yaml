@@ -99,6 +99,7 @@ services:
       STATSD_PORT: 8125
       STATSD_URL: "graphite"
       JAEGER_AGENT_HOST: "jaeger"
+      ENABLE_PHOBOS: "true"
     restart: on-failure
     depends_on:
       - "mongo"
@@ -115,6 +116,7 @@ services:
       STATSD_PORT: 8125
       STATSD_URL: "graphite"
       JAEGER_AGENT_HOST: "jaeger"
+      ENABLE_PHOBOS: "true"
     restart: on-failure
     depends_on:
       - "mongo"
@@ -130,6 +132,7 @@ services:
       STATSD_PORT: 8125
       STATSD_URL: "graphite"
       JAEGER_AGENT_HOST: "jaeger"
+      ENABLE_PHOBOS: "true"
     restart: on-failure
     depends_on:
       - "pricing-engine"
