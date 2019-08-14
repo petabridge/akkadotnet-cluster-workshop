@@ -33,7 +33,7 @@ spec:
       terminationGracePeriodSeconds: 35
       containers:
       - name: trade-processor
-        image: akka.cqrs.tradeprocessor:0.1.4
+        image: akka.cqrs.tradeprocessor:0.1.5
         lifecycle:
           preStop:
             exec:

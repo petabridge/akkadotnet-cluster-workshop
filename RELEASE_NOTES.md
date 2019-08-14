@@ -1,17 +1,2 @@
-#### 0.1.4 July 29 2019 ####
-* Fixed issue with `pbm` not being found on the PATH inside Docker containers.
-* Fixed ASP.NET Core base image for Akka.CQRS.Pricing.Web.
-
-#### 0.1.3 June 20 2019 ####
-* Condensed Docker images to 1/10 previous size using `dotnet-runtime` base image.
-
-#### 0.1.2 May 31 2019 ####
-* Reorganized pricing and pricing-processor Dockerfiles to comport with Docker best practices.
-* Enabled Phobos.
-
-#### 0.1.1 May 31 2019 ####
-*Reorganized trader and trade-processor Dockerfiles to comport with Docker best practices.
-
-#### 0.1.0 May 26 2019 ####
-* Fixed `NullReferenceException` when recovering `MatchAggregatorSnapshot` records with no price and volume updates.
-* Fixed issue with BSON serialization for `MatchAggregatorSnapshot` records.
+#### 0.1.5 August 14 2019 ####
+* Upgraded to Akka.NET v1.3.14 and Phobos v0.7.0
