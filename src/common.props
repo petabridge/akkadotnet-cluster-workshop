@@ -2,8 +2,8 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2019 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.1.5</VersionPrefix>
-    <PackageReleaseNotes>Upgraded to Akka.NET v1.3.14 and Phobos v0.7.0</PackageReleaseNotes>
+    <VersionPrefix>0.1.6</VersionPrefix>
+    <PackageReleaseNotes>Added cluster singleton for pricing entity startup.</PackageReleaseNotes>
     <PackageIconUrl>
     </PackageIconUrl>
     <PackageProjectUrl>
