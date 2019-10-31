@@ -279,13 +279,18 @@ Target "PublishCode" (fun _ ->
                       ++ "src/**/*.Web.csproj"
 
     let runSingleProject project =
+        let args = 
+            let dir = System.IO.Path.GetDirectoryName project
+            let publish = System.IO.Path.Combine (dir, "bin/Release/netcoreapp2.1/publish")
+            sprintf "--no-restore --output %s" publish
+    
         DotNetCli.Publish
             (fun p -> 
                 { p with
                     Project = project
                     Configuration = configuration
                     VersionSuffix = overrideVersionSuffix project
-                    AdditionalArgs = ["--no-restore --output bin/Release/netcoreapp2.1/publish"] // would be ideal to change publish dir via MSBuild
+                    AdditionalArgs = [args] // would be ideal to change publish dir via MSBuild
                     })
 
     projects |> Seq.iter (runSingleProject)
