@@ -18,7 +18,7 @@
     <TestSdkVersion>16.5.0</TestSdkVersion>
     <AkkaVersion>1.4.1</AkkaVersion>
     <AkkaBootstrapVersion>0.4.0</AkkaBootstrapVersion>
-    <AkkaPersistenceExtrasVersion>0.4.3</AkkaPersistenceExtrasVersion>
+    <AkkaPersistenceExtrasVersion>0.5.0</AkkaPersistenceExtrasVersion>
     <FluentAssertionsVersion>5.10.2</FluentAssertionsVersion>
     <GoogleProtobufVersion>3.4.0</GoogleProtobufVersion>
     <PetabridgeCmdVersion>0.6.3</PetabridgeCmdVersion>
