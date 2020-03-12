@@ -17,7 +17,7 @@
     <XunitVersion>2.4.1</XunitVersion>
     <TestSdkVersion>16.5.0</TestSdkVersion>
     <AkkaVersion>1.4.1</AkkaVersion>
-    <AkkaBootstrapVersion>0.3.0</AkkaBootstrapVersion>
+    <AkkaBootstrapVersion>0.4.0</AkkaBootstrapVersion>
     <AkkaPersistenceExtrasVersion>0.4.3</AkkaPersistenceExtrasVersion>
     <FluentAssertionsVersion>5.10.2</FluentAssertionsVersion>
     <GoogleProtobufVersion>3.4.0</GoogleProtobufVersion>
