@@ -6,7 +6,7 @@
     <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Petabridge.Cmd.Host" Version="0.7.1" />
+    <PackageReference Include="Petabridge.Cmd.Host" Version="0.8.0" />
   </ItemGroup>
 
   <ItemGroup>
