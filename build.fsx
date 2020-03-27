@@ -285,7 +285,6 @@ Target "PublishCode" (fun _ ->
                     Project = project
                     Configuration = configuration
                     VersionSuffix = overrideVersionSuffix project
-                    AdditionalArgs = ["--no-restore --output bin/Release/netcoreapp2.1/publish"] // would be ideal to change publish dir via MSBuild
                     })
 
     projects |> Seq.iter (runSingleProject)
