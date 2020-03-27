@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Phobos|AnyCPU'">
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>$(MSBuildProjectDirectory)bin\Release\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
