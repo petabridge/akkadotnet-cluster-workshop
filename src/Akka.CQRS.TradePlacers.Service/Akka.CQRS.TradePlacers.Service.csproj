@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="Petabridge.Cmd.Cluster" Version="$(PetabridgeCmdVersion)" />
-    <PackageReference Include="Petabridge.Cmd.Cluster.Sharding" Version="$(PetabridgeCmdVersion)-beta" />
+    <PackageReference Include="Petabridge.Cmd.Cluster.Sharding" Version="$(PetabridgeCmdVersion)" />
     <PackageReference Include="Petabridge.Cmd.Remote" Version="$(PetabridgeCmdVersion)" />
   </ItemGroup>
 
