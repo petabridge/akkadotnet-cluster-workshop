@@ -40,7 +40,7 @@ spec:
     app: statsd
   type: LoadBalancer
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: akka-cqrs
@@ -49,6 +49,9 @@ metadata:
     app: statsd
 spec:
   replicas: 1
+  selector:
+      matchLabels:
+        app: statsd
   template:
     metadata:
       labels:
