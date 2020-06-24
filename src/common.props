@@ -2,8 +2,9 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2019 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.1.6</VersionPrefix>
-    <PackageReleaseNotes>Added cluster singleton for pricing entity startup.</PackageReleaseNotes>
+    <VersionPrefix>0.2.0</VersionPrefix>
+    <PackageReleaseNotes>Upgraded to latest version of Akka.NET
+Upgraded all K8s files to support latest v1 stable APIs</PackageReleaseNotes>
     <PackageIconUrl>
     </PackageIconUrl>
     <PackageProjectUrl>
