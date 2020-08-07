@@ -16,7 +16,7 @@ Upgraded all K8s files to support latest v1 stable APIs</PackageReleaseNotes>
   <PropertyGroup>
     <NBenchVersion>1.2.2</NBenchVersion>
     <XunitVersion>2.4.1</XunitVersion>
-    <TestSdkVersion>16.6.1</TestSdkVersion>
+    <TestSdkVersion>16.7.0</TestSdkVersion>
     <AkkaVersion>1.4.9</AkkaVersion>
     <AkkaBootstrapVersion>0.4.0</AkkaBootstrapVersion>
     <AkkaPersistenceExtrasVersion>0.5.0</AkkaPersistenceExtrasVersion>
