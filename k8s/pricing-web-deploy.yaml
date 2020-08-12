@@ -51,7 +51,7 @@ spec:
       terminationGracePeriodSeconds: 35
       containers:
       - name: pricing-web
-        image: akka.cqrs.pricing.web:0.1.0
+        image: akka.cqrs.pricing.web:0.1.5
         lifecycle:
           preStop:
             exec:
@@ -82,7 +82,7 @@ spec:
           httpGet:
             path: "/"
             port: 80
-          initialDelaySeconds: 5
+          initialDelaySeconds: 30
         ports:
         - containerPort: 16666
           protocol: TCP
