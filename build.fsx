@@ -47,6 +47,8 @@ Target "Clean" (fun _ ->
     CleanDir outputPerfTests
     CleanDir outputNuGet
     CleanDir "docs/_site"
+    CleanDirs !! "./**/bin"
+    CleanDirs !! "./**/obj"
 )
 
 Target "AssemblyInfo" (fun _ ->
@@ -164,7 +166,7 @@ Target "Protobuf" <| fun _ ->
 
         let result = ExecProcess(fun info -> 
             info.FileName <- protocPath
-            info.WorkingDirectory <- (Path.GetDirectoryName (FullName protocPath))
+            info.WorkingDirectory <- (Path.GetDirectoryName (FullName protocPath):string)
             info.Arguments <- args) (System.TimeSpan.FromMinutes 45.0) (* Reasonably long-running task. *)
         if result <> 0 then failwithf "protoc failed. %s %s" protocPath args
     
@@ -274,6 +276,7 @@ Target "PublishNuget" (fun _ ->
 // Docker images
 //--------------------------------------------------------------------------------  
 Target "PublishCode" (fun _ ->    
+    ActivateFinalTarget "KillCreatedProcesses"
     let projects = !! "src/**/*.Service.csproj" // publish services  and web only
                       ++ "src/**/*.Web.csproj"
 
@@ -284,7 +287,6 @@ Target "PublishCode" (fun _ ->
                     Project = project
                     Configuration = configuration
                     VersionSuffix = overrideVersionSuffix project
-                    AdditionalArgs = ["--no-restore --output bin/Release/netcoreapp2.1/publish"] // would be ideal to change publish dir via MSBuild
                     })
 
     projects |> Seq.iter (runSingleProject)
@@ -304,6 +306,9 @@ Target "BuildDockerImages" (fun _ ->
                    -- "src/**/*Tests*.csproj"
 
     let remoteRegistryUrl = getBuildParamOrDefault "remoteRegistry" ""
+
+    let composedGetFileNameWithoutExtension (p:string) =
+        System.IO.Path.GetFileNameWithoutExtension p
 
     let buildDockerImage imageName projectPath =
         
@@ -331,13 +336,16 @@ Target "BuildDockerImages" (fun _ ->
                     |> append "."
                     |> toText
 
+        let composedGetDirName (p:string) =
+            System.IO.Path.GetDirectoryName p
+
         ExecProcess(fun info -> 
                 info.FileName <- "docker"
-                info.WorkingDirectory <- Path.GetDirectoryName projectPath
+                info.WorkingDirectory <- composedGetDirName projectPath
                 info.Arguments <- args) (System.TimeSpan.FromMinutes 5.0) (* Reasonably long-running task. *)
 
     let runSingleProject project =
-        let projectName = Path.GetFileNameWithoutExtension project
+        let projectName = composedGetFileNameWithoutExtension project
         let imageName = mapDockerImageName projectName
         let result = match imageName with
                         | None -> 0
