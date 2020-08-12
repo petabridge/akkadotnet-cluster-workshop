@@ -88,9 +88,7 @@ namespace Akka.CQRS.Pricing.Actors
         /// Recovery has completed successfully.
         /// </summary>
         protected override void OnReplaySuccess()
-        {
-            _publishPricesTask = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(TimeSpan.FromSeconds(10),
-                TimeSpan.FromSeconds(10), Self, PublishEvents.Instance, ActorRefs.NoSender);
+        {         
 
             // setup subscription to TradeEventPublisher
             Self.Tell(DoSubscribe.Instance);
@@ -263,6 +261,9 @@ namespace Akka.CQRS.Pricing.Actors
 
         protected override void PreStart()
         {
+            _publishPricesTask = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(TimeSpan.FromSeconds(10),
+               TimeSpan.FromSeconds(10), Self, PublishEvents.Instance, ActorRefs.NoSender);
+
             _log.Info("Starting...");
             base.PreStart();
         }
