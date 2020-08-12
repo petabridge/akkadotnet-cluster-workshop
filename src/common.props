@@ -1,10 +1,10 @@
 <Project>
   <PropertyGroup>
-    <Copyright>Copyright © 2017 Your Company</Copyright>
-    <Authors>Your Authors</Authors>
-    <VersionPrefix>0.1.0</VersionPrefix>
-    <PackageReleaseNotes>Fixed `NullReferenceException` when recovering `MatchAggregatorSnapshot` records with no price and volume updates.
-Fixed issue with BSON serialization for `MatchAggregatorSnapshot` records.</PackageReleaseNotes>
+    <Copyright>Copyright © 2015-2019 Petabridge</Copyright>
+    <Authors>Petabridge</Authors>
+    <VersionPrefix>0.2.0</VersionPrefix>
+    <PackageReleaseNotes>Upgraded to latest version of Akka.NET
+Upgraded all K8s files to support latest v1 stable APIs</PackageReleaseNotes>
     <PackageIconUrl>
     </PackageIconUrl>
     <PackageProjectUrl>
@@ -16,13 +16,13 @@ Fixed issue with BSON serialization for `MatchAggregatorSnapshot` records.</Pack
   <PropertyGroup>
     <NBenchVersion>1.2.2</NBenchVersion>
     <XunitVersion>2.4.1</XunitVersion>
-    <TestSdkVersion>15.9.0</TestSdkVersion>
-    <AkkaVersion>1.3.14</AkkaVersion>
-    <AkkaBootstrapVersion>0.2.1</AkkaBootstrapVersion>
-    <AkkaPersistenceExtrasVersion>0.4.3</AkkaPersistenceExtrasVersion>
-    <FluentAssertionsVersion>5.6.0</FluentAssertionsVersion>
-    <GoogleProtobufVersion>3.4.0</GoogleProtobufVersion>
-    <PetabridgeCmdVersion>0.6.3</PetabridgeCmdVersion>
+    <TestSdkVersion>16.7.0</TestSdkVersion>
+    <AkkaVersion>1.4.9</AkkaVersion>
+    <AkkaBootstrapVersion>0.4.0</AkkaBootstrapVersion>
+    <AkkaPersistenceExtrasVersion>0.5.0</AkkaPersistenceExtrasVersion>
+    <FluentAssertionsVersion>5.10.3</FluentAssertionsVersion>
+    <GoogleProtobufVersion>3.12.4</GoogleProtobufVersion>
+    <PetabridgeCmdVersion>0.8.0</PetabridgeCmdVersion>
   </PropertyGroup>
   <PropertyGroup>
     <NetCoreVersion>netcoreapp2.1</NetCoreVersion>
