@@ -1,0 +1,1 @@
+This is where code-generated files from the Protobuf compiler go.
