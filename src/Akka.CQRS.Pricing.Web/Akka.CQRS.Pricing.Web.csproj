@@ -5,8 +5,8 @@
     <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Phobos|AnyCPU'">
-    <OutputPath>bin\Release\$(NetCoreVersion)\</OutputPath>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Phobos|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
