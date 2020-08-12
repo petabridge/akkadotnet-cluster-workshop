@@ -92,6 +92,17 @@ if [ ! -f "$FAKE_EXE" ]; then
 fi
 
 ###########################################################################
+# INSTALL Protobuf
+###########################################################################
+if [ ! -f "$PROTOBUF_EXE" ]; then
+    mono "$NUGET_EXE" install Google.Protobuf.Tools -ExcludeVersion -Version $PROTOBUF_VERSION -OutputDirectory "$TOOLS_DIR"
+    if [ $? -ne 0 ]; then
+        echo "An error occured while installing Google.Protobuf.Tools."
+        exit 1
+    fi
+fi
+
+###########################################################################
 # INSTALL DOCFX
 ###########################################################################
 if [ ! -f "$DOCFX_EXE" ]; then
