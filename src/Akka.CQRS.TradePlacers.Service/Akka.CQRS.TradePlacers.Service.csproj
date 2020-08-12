@@ -6,8 +6,8 @@
     <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Phobos|AnyCPU'">
-    <OutputPath>bin\Release\$(NetCoreVersion)\</OutputPath>
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Phobos|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="Petabridge.Cmd.Cluster" Version="$(PetabridgeCmdVersion)" />
-    <PackageReference Include="Petabridge.Cmd.Cluster.Sharding" Version="$(PetabridgeCmdVersion)-beta" />
+    <PackageReference Include="Petabridge.Cmd.Cluster.Sharding" Version="$(PetabridgeCmdVersion)" />
     <PackageReference Include="Petabridge.Cmd.Remote" Version="$(PetabridgeCmdVersion)" />
   </ItemGroup>
 
