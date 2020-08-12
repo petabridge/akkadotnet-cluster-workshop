@@ -1,0 +1,4 @@
+akka.cqrs.tradeprocessor
+akka.cqrs.traders
+akka.cqrs.pricing
+akka.cqrs.pricing.web
