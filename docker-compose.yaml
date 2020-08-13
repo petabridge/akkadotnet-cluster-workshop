@@ -16,6 +16,31 @@ services:
     depends_on:
       - "mongo"
 
+  graphite:
+    image: graphiteapp/graphite-statsd
+    hostname: graphite
+    container_name: graphite
+    restart: always
+    ports:
+      - "0:80"
+
+  grafana:
+    image: grafana/grafana
+    restart: always
+    ports:
+      - '3000:3000'
+    links:
+        - graphite
+    environment:
+        - GF_SECURITY_ADMIN_PASSWORD=password
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.6
+    hostname: jaeger
+    restart: always
+    ports:
+      - '16686:16686'
+
   lighthouse:
     image: petabridge/lighthouse:latest
     hostname: lighthouse

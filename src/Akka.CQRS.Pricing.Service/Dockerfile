@@ -7,8 +7,6 @@ ENV CLUSTER_IP ""
 ENV CLUSTER_PORT "6055"
 ENV MONGO_CONNECTION_STR "" #MongoDb connection string for Akka.Persistence
 
-COPY ./bin/Release/netcoreapp2.1/publish/ /app
-
 # 9110 - Petabridge.Cmd
 # 6055 - Akka.Cluster
 EXPOSE 9110 6055
@@ -16,9 +14,17 @@ EXPOSE 9110 6055
 # Install Petabridge.Cmd client
 RUN dotnet tool install --global pbm 
 
+COPY ./bin/Release/netcoreapp2.1/publish/ /app
+
+FROM microsoft/dotnet:2.1-runtime AS app
+WORKDIR /app
+
+COPY --from=base /app /app
+
+# copy .NET Core global tool
+COPY --from=base /root/.dotnet /root/.dotnet/
+
 # Needed because https://stackoverflow.com/questions/51977474/install-dotnet-core-tool-dockerfile
 ENV PATH="${PATH}:/root/.dotnet/tools"
-
-# RUN pbm help
 
 CMD ["dotnet", "Akka.CQRS.Pricing.Service.dll"]
