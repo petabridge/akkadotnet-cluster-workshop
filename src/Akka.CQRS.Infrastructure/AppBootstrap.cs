@@ -6,7 +6,7 @@ using Akka.Cluster.Tools.Client;
 using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Configuration;
 using Akka.CQRS.Infrastructure.Ops;
-//using Akka.CQRS.Serialization;
+using Akka.CQRS.Serialization;
 using static Akka.CQRS.Infrastructure.MongoDbHoconHelper;
 using static Akka.CQRS.Infrastructure.Ops.OpsConfig;
 #if PHOBOS
