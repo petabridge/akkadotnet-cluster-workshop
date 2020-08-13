@@ -35,21 +35,9 @@ namespace Akka.CQRS.Infrastructure
             {
                 return envelope.Message.StockId;
             }
-
-            switch (message)
-            {
-                case ConfirmableMessage<Ask> a:
-                    return a.Message.StockId;
-                case ConfirmableMessage<Bid> b:
-                    return b.Message.StockId;
-                case ConfirmableMessage<Fill> f:
-                    return f.Message.StockId;
-                case ConfirmableMessage<Match> m:
-                    return m.Message.StockId;
-            }
-
+           
             return null;
         }
     }
-    */
+	*/
 }
