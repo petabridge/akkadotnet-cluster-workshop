@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\common.props" />
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>$(NetStandardVersion)</TargetFramework>
     <Description>Shared, non-domain-specific infrastructure used by various Akka.CQRS services.</Description>
     <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
@@ -15,13 +15,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Akka.Cluster.Sharding" Version="$(AkkaVersion)-beta*" />
+    <PackageReference Include="Akka.Cluster.Sharding" Version="$(AkkaVersion)" />
     <PackageReference Include="Akka.Persistence.Extras" Version="$(AkkaPersistenceExtrasVersion)" />
     <PackageReference Include="Akka.Bootstrap.Docker" Version="$(AkkaBootstrapVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Phobos'">
-     <!-- Uncomment these to install Phobos binaries -->
+    <!-- Uncomment these to install Phobos binaries -->
     <!--<PackageReference Include="Phobos.Actor.Cluster" Version="$(PhobosVersion)" />
     <PackageReference Include="Phobos.Tracing.Jaeger" Version="$(PhobosTracingVersion)" />
     <PackageReference Include="Phobos.Monitoring.StatsD" Version="$(PhobosMonitoringVersion)" />-->

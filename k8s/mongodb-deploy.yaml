@@ -9,13 +9,16 @@ spec:
   selector:
     app: mongodb
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: akka-cqrs
   name: mongodb
 spec:
   replicas: 1
+  selector:
+      matchLabels:
+        app: mongodb
   template:
     metadata:
       labels:
