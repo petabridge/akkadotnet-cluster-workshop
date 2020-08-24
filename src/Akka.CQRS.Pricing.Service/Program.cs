@@ -38,12 +38,14 @@ namespace Akka.CQRS.Pricing.Service
                 ClusterShardingSettings.Create(actorSystem),
                 new StockShardMsgRouter());
 
+            var priceInitiatorActor = actorSystem.ActorOf(ClusterSingletonManager.Props(Props.Create(() => new PriceInitiatorActor(shardRegion)),
+                ClusterSingletonManagerSettings.Create(actorSystem).WithRole("pricing-engine").WithSingletonName("priceInitiator")), "priceInitiator");
+
             var clientHandler =
                 actorSystem.ActorOf(Props.Create(() => new ClientHandlerActor(shardRegion)), "subscriptions");
 
             // make ourselves available to ClusterClient at /user/subscriptions
             ClusterClientReceptionist.Get(actorSystem).RegisterService(clientHandler);
-            
 
             Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
             {
