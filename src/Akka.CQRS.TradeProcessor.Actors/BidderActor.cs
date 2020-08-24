@@ -45,6 +45,11 @@ namespace Akka.CQRS.TradeProcessor.Actors
             private DoBid() { }
         }
 
+        public BidderActor(ITradeEventSubscriptionManager subscriptionManager, string tickerSymbol, PriceRange targetRange, IActorRef tradeGateway)
+            : this(tickerSymbol, subscriptionManager, tradeGateway, targetRange,
+                GuidTradeOrderIdGenerator.Instance, CurrentUtcTimestamper.Instance)
+        { }
+
         public BidderActor(string tickerSymbol, PriceRange targetRange, IActorRef tradeGateway)
             : this(tickerSymbol, DistributedPubSubTradeEventSubscriptionManager.For(Context.System), tradeGateway, targetRange,
                 GuidTradeOrderIdGenerator.Instance, CurrentUtcTimestamper.Instance)
