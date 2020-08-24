@@ -6,14 +6,22 @@ ENV CLUSTER_SEEDS "[]"
 ENV CLUSTER_IP ""
 ENV CLUSTER_PORT "5054"
 
-COPY ./bin/Release/netcoreapp2.1/publish/ /app
-
 # 9110 - Petabridge.Cmd
 # 5055 - Akka.Cluster
 EXPOSE 9110 5054
 
 # Install Petabridge.Cmd client
 RUN dotnet tool install --global pbm 
+
+COPY ./bin/Release/netcoreapp2.1/publish/ /app
+
+FROM microsoft/dotnet:2.1-runtime AS app
+WORKDIR /app
+
+COPY --from=base /app /app
+
+# copy .NET Core global tool
+COPY --from=base /root/.dotnet /root/.dotnet/
 
 # Needed because https://stackoverflow.com/questions/51977474/install-dotnet-core-tool-dockerfile
 ENV PATH="${PATH}:/root/.dotnet/tools"
