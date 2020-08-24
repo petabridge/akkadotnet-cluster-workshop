@@ -35,9 +35,9 @@ namespace Akka.CQRS.Infrastructure
             {
                 return envelope.Message.StockId;
             }
-
+           
             return null;
         }
     }
-    */
+	*/
 }
