@@ -22,10 +22,10 @@ namespace Akka.CQRS.Pricing.Web.Services
         {
             Console.WriteLine("STARTING AKKA.NET");
 
-            var conf = ConfigurationFactory.ParseString(File.ReadAllText("app.conf"))
-                .BoostrapApplication(new AppBootstrapConfig(false, false));
+            var setup = BootstrapSetup.Create()
+                .BoostrapApplication(ConfigurationFactory.ParseString(File.ReadAllText("app.conf")), new AppBootstrapConfig(true, true));
 
-            var actorSystem = Sys = ActorSystem.Create("AkkaCqrsWeb", conf);
+            var actorSystem = Sys = ActorSystem.Create("AkkaCqrsWeb", setup);
             var stockPublisherActor =
                 actorSystem.ActorOf(Props.Create(() => new StockPublisherActor(helper)), "stockPublisher");
 
