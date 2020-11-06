@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\common.props" />
   <PropertyGroup>
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
@@ -22,8 +22,8 @@
 
   <ItemGroup Condition="'$(Configuration)' == 'Phobos'">
     <PackageReference Include="Phobos.Actor.Cluster" Version="$(PhobosVersion)" />
-    <PackageReference Include="Phobos.Tracing.Jaeger" Version="$(PhobosTracingVersion)" />
-    <PackageReference Include="Phobos.Monitoring.StatsD" Version="$(PhobosMonitoringVersion)" />
+    <PackageReference Include="Phobos.Tracing" Version="$(PhobosTracingVersion)" />
+    <PackageReference Include="Phobos.Monitoring" Version="$(PhobosMonitoringVersion)" />
   </ItemGroup>
 
   <ItemGroup>
