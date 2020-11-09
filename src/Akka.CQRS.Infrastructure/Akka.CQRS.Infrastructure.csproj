@@ -20,13 +20,13 @@
     <PackageReference Include="Akka.Persistence.Extras" Version="$(AkkaPersistenceExtrasVersion)" />
     <PackageReference Include="Akka.Bootstrap.Docker" Version="$(AkkaBootstrapVersion)" />
     <PackageReference Include="App.Metrics.Graphite" Version="4.1.0" />
+    <PackageReference Include="Jaeger" Version="0.3.7" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Phobos'">
     <PackageReference Include="Phobos.Actor.Cluster" Version="$(PhobosVersion)" />
     <PackageReference Include="Phobos.Tracing" Version="$(PhobosTracingVersion)" />
     <PackageReference Include="Phobos.Monitoring" Version="$(PhobosMonitoringVersion)" />
-    <PackageReference Include="Jaeger" Version="0.3.7" />
   </ItemGroup>
 
   <ItemGroup>

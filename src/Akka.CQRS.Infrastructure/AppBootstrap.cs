@@ -18,13 +18,14 @@ using Jaeger.Senders;
 using Microsoft.Extensions.Logging;
 using OpenTracing;
 using OpenTracing.Mock;
-using Phobos.Actor.Configuration;
-using Phobos.Tracing.Scopes;
 using static Akka.CQRS.Infrastructure.MongoDbHoconHelper;
 using static Akka.CQRS.Infrastructure.Ops.OpsConfig;
+
 #if PHOBOS
 using System.Net;
 using Phobos.Actor;
+using Phobos.Actor.Configuration;
+using Phobos.Tracing.Scopes;
 #endif
 
 namespace Akka.CQRS.Infrastructure
@@ -73,7 +74,7 @@ namespace Akka.CQRS.Infrastructure
                 config = ConfigurationFactory.ParseString("akka.actor.provider = remote").WithFallback(config);
             }
 
-            return setup.WithConfig(config);
+            return ActorSystemSetup.Create(setup.WithConfig(config));
 #endif
         }
 
