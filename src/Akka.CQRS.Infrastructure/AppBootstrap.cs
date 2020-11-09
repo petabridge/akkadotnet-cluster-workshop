@@ -9,8 +9,17 @@ using Akka.Configuration;
 using Akka.CQRS.Infrastructure.Ops;
 using Akka.CQRS.Serialization;
 using App.Metrics;
+using App.Metrics.Reporting.Graphite;
+using App.Metrics.Reporting.Graphite.Client;
+using Jaeger;
+using Jaeger.Reporters;
+using Jaeger.Samplers;
+using Jaeger.Senders;
+using Microsoft.Extensions.Logging;
+using OpenTracing;
 using OpenTracing.Mock;
 using Phobos.Actor.Configuration;
+using Phobos.Tracing.Scopes;
 using static Akka.CQRS.Infrastructure.MongoDbHoconHelper;
 using static Akka.CQRS.Infrastructure.Ops.OpsConfig;
 #if PHOBOS
@@ -88,6 +97,13 @@ namespace Akka.CQRS.Infrastructure
         ///     output.
         /// </summary>
         public const string JAEGER_AGENT_HOST = "JAEGER_AGENT_HOST";
+        /// <summary>
+        ///     Name of the <see cref="Environment" /> variable used to direct Phobos' Jaeger
+        ///     output endpoint port setup.
+        /// </summary>
+        public const string JAEGER_AGENT_PORT = "JAEGER_AGENT_PORT";
+
+        public const int DefaultJaegerAgentPort = 6832;
 
         public static ActorSystemSetup BootstrapPhobos(this BootstrapSetup setup, Config config, AppBootstrapConfig appConfig)
         {
@@ -106,45 +122,76 @@ namespace Akka.CQRS.Infrastructure
             var phobosConfig = GetPhobosConfig();
             config = phobosConfig.WithFallback(config);
 
+            OpenTracing.ITracer tracer = CreateJaegerTracing(appConfig);
+            
             var statsdUrl = Environment.GetEnvironmentVariable(STATSD_URL);
             var statsDPort = Environment.GetEnvironmentVariable(STATSD_PORT);
-            var jaegerAgentHost = Environment.GetEnvironmentVariable(JAEGER_AGENT_HOST);
-            
-            OpenTracing.ITracer tracer = new MockTracer();
-            App.Metrics.IMetricsRoot metrics = new MetricsBuilder().Configuration.Configure(o =>
+             App.Metrics.IMetricsRoot metrics = new MetricsBuilder().Configuration.Configure(o =>
             {
                 o.GlobalTags.Add("host", Dns.GetHostName());
                 o.DefaultContextLabel = "akka.net";
                 o.Enabled = true;
                 o.ReportingEnabled = true;
-            }).Build();
+            }).Report.ToGraphite(
+                 options => {
+                     options.Graphite.BaseUri = new Uri($"net.udp://{statsdUrl}:{statsDPort}");
+                     options.ClientPolicy.BackoffPeriod = TimeSpan.FromSeconds(30);
+                     options.ClientPolicy.FailuresBeforeBackoff = 5;
+                     options.ClientPolicy.Timeout = TimeSpan.FromSeconds(10);
+                     options.FlushInterval = TimeSpan.FromSeconds(5);
+                 }).Build();
             
             var phobosConfigBuilder = new PhobosConfigBuilder()
                 .WithMetrics(m => m.SetMetricsRoot(metrics))
                 .WithTracing(t => t.SetTracer(tracer));
             
             return PhobosSetup.Create(phobosConfigBuilder)
-                .And(setup
+                .WithSetup(setup
                     .WithConfig(config)
                     .WithActorRefProvider(appConfig.NeedClustering
                         ? PhobosProviderSelection.Cluster
                         : PhobosProviderSelection.Remote));
 
-            /*if (!string.IsNullOrEmpty(statsdUrl) && int.TryParse(statsDPort, out var portNum))
-                phobosConfig = ConfigurationFactory.ParseString($"phobos.monitoring.statsd.endpoint=\"{statsdUrl}\"" +
-                                                                Environment.NewLine +
-                                                                $"phobos.monitoring.statsd.port={portNum}" +
-                                                                Environment.NewLine +
-                                                                $"phobos.tracing.jaeger.agent.host={jaegerAgentHost}")
-                    .WithFallback(phobosConfig);
-
-            if (!appConfig.NeedClustering)
+        }
+        
+        public static ITracer CreateJaegerTracing(AppBootstrapConfig config)
+        {
+            static ISender BuildSender()
             {
-                var config = ConfigurationFactory.ParseString(@"akka.actor.provider = ""Phobos.Actor.Remote.PhobosRemoteActorRefProvider, Phobos.Actor.Remote""");
-                return config.WithFallback(phobosConfig).WithFallback(setup);
+                if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(JAEGER_AGENT_HOST)))
+                {
+                    if (!int.TryParse(Environment.GetEnvironmentVariable(JAEGER_AGENT_PORT),
+                        out var udpPort))
+                        udpPort = DefaultJaegerAgentPort;
+                    return new UdpSender(
+                        Environment.GetEnvironmentVariable(JAEGER_AGENT_HOST) ?? "localhost",
+                        udpPort, 0);
+                }
+
+                return new HttpSender(Environment.GetEnvironmentVariable(JAEGER_AGENT_HOST));
             }
 
-            return phobosConfig.WithFallback(setup);*/
+            var loggerFactory = new LoggerFactory();
+            var builder = BuildSender();
+            var logReporter = new LoggingReporter(loggerFactory);
+
+            var remoteReporter = new RemoteReporter.Builder()
+                .WithLoggerFactory(loggerFactory) // optional, defaults to no logging
+                .WithMaxQueueSize(100) // optional, defaults to 100
+                .WithFlushInterval(TimeSpan.FromSeconds(1)) // optional, defaults to TimeSpan.FromSeconds(1)
+                .WithSender(builder) // optional, defaults to UdpSender("localhost", 6831, 0)
+                .Build();
+
+            var sampler = new ConstSampler(true); // keep sampling disabled
+
+            // name the service after the executing assembly
+            var tracer = new Tracer.Builder(config.ServiceName)
+                .WithReporter(new CompositeReporter(remoteReporter, logReporter))
+                .WithSampler(sampler)
+                .WithScopeManager(
+                    new ActorScopeManager()); // IMPORTANT: ActorScopeManager needed to properly correlate trace inside Akka.NET
+
+            return tracer.Build();
         }
 
 #endif
@@ -152,8 +199,9 @@ namespace Akka.CQRS.Infrastructure
 
     public sealed class AppBootstrapConfig
     {
-        public AppBootstrapConfig(bool needPersistence = true, bool needClustering = true)
+        public AppBootstrapConfig(string serviceName, bool needPersistence = true, bool needClustering = true)
         {
+            ServiceName = serviceName;
             NeedPersistence = needPersistence;
             NeedClustering = needClustering;
         }
@@ -161,5 +209,6 @@ namespace Akka.CQRS.Infrastructure
         public bool NeedPersistence { get; }
 
         public bool NeedClustering { get; }
+        public string ServiceName { get; }
     }
 }

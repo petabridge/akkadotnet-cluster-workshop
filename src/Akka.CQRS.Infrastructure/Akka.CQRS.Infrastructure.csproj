@@ -4,6 +4,7 @@
     <TargetFramework>$(NetStandardVersion)</TargetFramework>
     <Description>Shared, non-domain-specific infrastructure used by various Akka.CQRS services.</Description>
     <Configurations>Debug;Release;Phobos</Configurations>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Ops\phobos.conf" />
@@ -18,12 +19,14 @@
     <PackageReference Include="Akka.Cluster.Sharding" Version="$(AkkaVersion)" />
     <PackageReference Include="Akka.Persistence.Extras" Version="$(AkkaPersistenceExtrasVersion)" />
     <PackageReference Include="Akka.Bootstrap.Docker" Version="$(AkkaBootstrapVersion)" />
+    <PackageReference Include="App.Metrics.Graphite" Version="4.1.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Phobos'">
     <PackageReference Include="Phobos.Actor.Cluster" Version="$(PhobosVersion)" />
     <PackageReference Include="Phobos.Tracing" Version="$(PhobosTracingVersion)" />
     <PackageReference Include="Phobos.Monitoring" Version="$(PhobosMonitoringVersion)" />
+    <PackageReference Include="Jaeger" Version="0.3.7" />
   </ItemGroup>
 
   <ItemGroup>

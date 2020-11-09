@@ -28,7 +28,7 @@ namespace Akka.CQRS.Pricing.Service
         {
             var config = File.ReadAllText("app.conf");
             var setup = BootstrapSetup.Create()
-                .BoostrapApplication(ConfigurationFactory.ParseString(config), new AppBootstrapConfig(true, true));
+                .BoostrapApplication(ConfigurationFactory.ParseString(config), new AppBootstrapConfig("PricingService", true, true));
 
             var actorSystem = ActorSystem.Create("AkkaTrader", setup);
 
