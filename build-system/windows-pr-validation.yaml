@@ -5,6 +5,7 @@ trigger:
     include:
       - dev
       - master
+      - start
       - lesson*
 
 pr:
