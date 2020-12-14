@@ -19,7 +19,7 @@ Upgraded all K8s files to support latest v1 stable APIs</PackageReleaseNotes>
     <TestSdkVersion>16.7.0</TestSdkVersion>
     <AkkaVersion>1.4.9</AkkaVersion>
     <AkkaBootstrapVersion>0.4.0</AkkaBootstrapVersion>
-    <AkkaPersistenceExtrasVersion>0.5.0</AkkaPersistenceExtrasVersion>
+    <AkkaPersistenceExtrasVersion>0.5.2</AkkaPersistenceExtrasVersion>
     <FluentAssertionsVersion>5.10.3</FluentAssertionsVersion>
     <GoogleProtobufVersion>3.12.4</GoogleProtobufVersion>
     <PetabridgeCmdVersion>0.8.0</PetabridgeCmdVersion>
