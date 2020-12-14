@@ -2,9 +2,8 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2019 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.2.0</VersionPrefix>
-    <PackageReleaseNotes>Upgraded to latest version of Akka.NET
-Upgraded all K8s files to support latest v1 stable APIs</PackageReleaseNotes>
+    <VersionPrefix>0.2.1</VersionPrefix>
+    <PackageReleaseNotes>Added footer that displays assembly version on Pricing UI</PackageReleaseNotes>
     <PackageIconUrl>
     </PackageIconUrl>
     <PackageProjectUrl>
@@ -29,9 +28,9 @@ Upgraded all K8s files to support latest v1 stable APIs</PackageReleaseNotes>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Phobos'">
-    <PhobosVersion>0.7.0</PhobosVersion>
-    <PhobosTracingVersion>0.6.0</PhobosTracingVersion>
-    <PhobosMonitoringVersion>0.8.0</PhobosMonitoringVersion>
+    <PhobosVersion>1.0.3</PhobosVersion>
+    <PhobosTracingVersion>1.0.3</PhobosTracingVersion>
+    <PhobosMonitoringVersion>1.0.3</PhobosMonitoringVersion>
     <DefineConstants>$(DefineConstants);RELEASE;</DefineConstants>
   </PropertyGroup>
 </Project>

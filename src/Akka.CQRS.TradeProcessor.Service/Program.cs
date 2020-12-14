@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
 using Akka.Configuration;
@@ -16,9 +17,10 @@ namespace Akka.CQRS.TradeProcessor.Service
         static int Main(string[] args)
         {
           var config = File.ReadAllText("app.conf");
-            var conf = ConfigurationFactory.ParseString(config).BoostrapApplication(new AppBootstrapConfig(true, true));
+          var setup = BootstrapSetup.Create()
+              .BoostrapApplication(ConfigurationFactory.ParseString(config), new AppBootstrapConfig("TradeProcessor", true, true));
 
-            var actorSystem = ActorSystem.Create("AkkaTrader", conf);
+            var actorSystem = ActorSystem.Create("AkkaTrader", setup);
 
             Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
             {

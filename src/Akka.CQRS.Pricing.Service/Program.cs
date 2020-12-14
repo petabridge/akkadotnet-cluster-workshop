@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Akka.Actor;
+using Akka.Actor.Setup;
 using Akka.Bootstrap.Docker;
 using Akka.Cluster.Sharding;
 using Akka.Cluster.Tools.Client;
@@ -26,9 +27,10 @@ namespace Akka.CQRS.Pricing.Service
         static int Main(string[] args)
         {
             var config = File.ReadAllText("app.conf");
-            var conf = ConfigurationFactory.ParseString(config);
+            var setup = BootstrapSetup.Create()
+                .BoostrapApplication(ConfigurationFactory.ParseString(config), new AppBootstrapConfig("PricingService", true, true));
 
-            var actorSystem = ActorSystem.Create("AkkaTrader", conf.BoostrapApplication(new AppBootstrapConfig(true, true)));
+            var actorSystem = ActorSystem.Create("AkkaTrader", setup);
 
             var sharding = ClusterSharding.Get(actorSystem);
 
