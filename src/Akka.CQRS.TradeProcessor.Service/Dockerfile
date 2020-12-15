@@ -16,7 +16,7 @@ RUN dotnet tool install --global pbm
 
 COPY ./bin/Release/netcoreapp3.1/publish/ /app
 
-FROM microsoft/dotnet:3.1-runtime AS app
+FROM mcr.microsoft.com/dotnet/core/runtime:3.1 AS app
 WORKDIR /app
 
 COPY --from=base /app /app
