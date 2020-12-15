@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:2.1-sdk AS base
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS base
 WORKDIR /app
 
 # should be a comma-delimited list
@@ -13,9 +13,9 @@ EXPOSE 9110 5054
 # Install Petabridge.Cmd client
 RUN dotnet tool install --global pbm 
 
-COPY ./bin/Release/netcoreapp2.1/publish/ /app
+COPY ./bin/Release/netcoreapp3.1/publish/ /app
 
-FROM microsoft/dotnet:2.1-runtime AS app
+FROM microsoft/dotnet:3.1-runtime AS app
 WORKDIR /app
 
 COPY --from=base /app /app
