@@ -4,6 +4,7 @@ This code sample is part of Petabridge's [Akka.NET, Akka.Cluster, Kubernetes, an
 ## Building and Deploying
 Please see our build instructions here: https://petabridge.com/cluster/building-docker-images.html
 
+## Architecture Overview
 Akka.CQRS is a reference architecture for [Akka.NET](https://getakka.net/), intended to illustrate the following Akka.NET techniques and principles:
 
 1. [Command-Query Responsibility Segregation](https://docs.microsoft.com/en-us/azure/architecture/patterns/cqrs) - the Akka.NET actors who consume write events use distinctly different interfaces from those who consume read events
