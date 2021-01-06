@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Akka.CQRS.Pricing.Web
 {
@@ -38,7 +39,7 @@ namespace Akka.CQRS.Pricing.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -52,15 +53,13 @@ namespace Akka.CQRS.Pricing.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(ep =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                ep.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                ep.MapHub<StockHub>("/hubs/stockHub");
             });
 
-            app.UseSignalR(builder => { builder.MapHub<StockHub>("/hubs/stockHub"); });
-            app.ApplicationServices.GetService<StockBootstrap>().StartAsync(CancellationToken.None); //start Akka.NET
+            _ = app.ApplicationServices.GetService<StockBootstrap>().StartAsync(CancellationToken.None); //start Akka.NET
         }
     }
 }
