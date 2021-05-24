@@ -1,13 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\common.props" />
   <PropertyGroup>
-    <TargetFramework>$(NetStandardVersion)</TargetFramework>
+    <TargetFramework>$(NetCoreVersion)</TargetFramework>
     <Description>Shared, non-domain-specific infrastructure used by various Akka.CQRS services.</Description>
     <Configurations>Debug;Release;Phobos</Configurations>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="Ops\phobos.conf" />
-  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Ops\ops.conf" />
@@ -19,16 +16,16 @@
     <PackageReference Include="Akka.Persistence.Extras" Version="$(AkkaPersistenceExtrasVersion)" />
     <PackageReference Include="Akka.Bootstrap.Docker" Version="$(AkkaBootstrapVersion)" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="$(MicrosoftExtensionsVersion)" />
+    <PackageReference Include="Jaeger" Version="$(JaegerVersion)" />
+    <PackageReference Include="App.Metrics.Formatters.Prometheus" Version="$(AppMetricsVersion)" />
+    <PackageReference Include="App.Metrics.AspNetCore.All" Version="$(AppMetricsVersion)" />
+    <PackageReference Include="App.Metrics.Reporting.Console" Version="$(AppMetricsVersion)" />
+    <PackageReference Include="OpenTracing.Contrib.NetCore" Version="0.7.1" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Phobos'">
     <!-- Uncomment these to install Phobos binaries -->    
-    <PackageReference Include="OpenTracing.Contrib.NetCore" Version="0.7.1" />
     <PackageReference Include="Phobos.Actor.Cluster" Version="$(PhobosVersion)" />
-    <PackageReference Include="Jaeger" Version="$(JaegerVersion)" />
-    <PackageReference Include="App.Metrics.Formatters.Prometheus" Version="$(AppMetricsVersion)" />
-    <PackageReference Include="App.Metrics.AspNetCore.All" Version="$(AppMetricsVersion)" />
-		<PackageReference Include="App.Metrics.Reporting.Console" Version="$(AppMetricsVersion)" />
   </ItemGroup>
 
   <ItemGroup>
