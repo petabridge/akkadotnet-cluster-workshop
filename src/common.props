@@ -34,4 +34,8 @@ Fixed issue with BSON serialization for `MatchAggregatorSnapshot` records.</Pack
   <PropertyGroup Condition="'$(Configuration)' == 'Phobos'">
     <DefineConstants>$(DefineConstants);RELEASE;</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup>
+    <NetCoreVersion>netcoreapp3.1</NetCoreVersion>
+    <NetStandardVersion>netstandard2.0</NetStandardVersion>
+  </PropertyGroup>
 </Project>

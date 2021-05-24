@@ -16,7 +16,7 @@ namespace Akka.CQRS.TradeProcessor.Service
         static int Main(string[] args)
         {
           var config = File.ReadAllText("app.conf");
-            var conf = ConfigurationFactory.ParseString(config).BoostrapApplication(new AppBootstrapConfig(true, true));
+            var conf = ConfigurationFactory.ParseString(config).BootstrapConfig(new AppBootstrapConfig(true, true));
 
             var actorSystem = ActorSystem.Create("AkkaTrader", conf);
 
