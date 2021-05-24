@@ -9,14 +9,6 @@ updates:
       - "dependencies"
 
   - package-ecosystem: "nuget"
-    target-branch: "master"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    labels:
-      - "dependencies"
-
-  - package-ecosystem: "nuget"
     target-branch: "start"
     directory: "/"
     schedule:
