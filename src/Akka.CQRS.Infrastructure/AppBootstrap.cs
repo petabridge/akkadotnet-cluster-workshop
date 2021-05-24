@@ -13,22 +13,22 @@ using Akka.CQRS.Serialization;
 using Akka.DependencyInjection;
 using App.Metrics;
 using App.Metrics.Formatters.Prometheus;
+using Microsoft.Extensions.DependencyInjection;
+using OpenTracing;
+using static Akka.CQRS.Infrastructure.MongoDbHoconHelper;
+using static Akka.CQRS.Infrastructure.Ops.OpsConfig;
+#if PHOBOS // to stop ReSharper et al from blowing up our usings needed for Phobos builds
+using Microsoft.Extensions.Logging;
 using Jaeger;
 using Jaeger.Reporters;
 using Jaeger.Samplers;
 using Jaeger.Senders;
 using Jaeger.Senders.Thrift;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using OpenTracing;
-using Phobos.Actor.Configuration;
-using Phobos.Tracing.Scopes;
-using static Akka.CQRS.Infrastructure.MongoDbHoconHelper;
-using static Akka.CQRS.Infrastructure.Ops.OpsConfig;
-#if PHOBOS
 using System.Reflection;
 using Akka.Persistence.Extras;
 using Phobos.Actor;
+using Phobos.Actor.Configuration;
+using Phobos.Tracing.Scopes;
 #endif
 
 namespace Akka.CQRS.Infrastructure
