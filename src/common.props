@@ -14,7 +14,6 @@ Fixed issue with BSON serialization for `MatchAggregatorSnapshot` records.</Pack
     <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
-    <NBenchVersion>1.2.2</NBenchVersion>
     <XunitVersion>2.4.1</XunitVersion>
     <TestSdkVersion>16.9.4</TestSdkVersion>
     <AkkaVersion>1.4.20</AkkaVersion>
@@ -23,15 +22,16 @@ Fixed issue with BSON serialization for `MatchAggregatorSnapshot` records.</Pack
     <FluentAssertionsVersion>5.10.3</FluentAssertionsVersion>
     <GoogleProtobufVersion>3.17.1</GoogleProtobufVersion>
     <PetabridgeCmdVersion>0.8.5</PetabridgeCmdVersion>
+    <MicrosoftExtensionsVersion>3.1.0</MicrosoftExtensionsVersion>
+    <PhobosVersion>1.1.2</PhobosVersion>
+    <AppMetricsVersion>4.2.0</AppMetricsVersion>
+    <JaegerVersion>1.0.0</JaegerVersion>
   </PropertyGroup>
   <PropertyGroup>
     <NetCoreVersion>netcoreapp3.1</NetCoreVersion>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Phobos'">
-    <PhobosVersion>0.7.0</PhobosVersion>
-    <PhobosTracingVersion>0.6.0</PhobosTracingVersion>
-    <PhobosMonitoringVersion>0.8.0</PhobosMonitoringVersion>
     <DefineConstants>$(DefineConstants);RELEASE;</DefineConstants>
   </PropertyGroup>
 </Project>

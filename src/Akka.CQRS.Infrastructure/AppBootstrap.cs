@@ -85,7 +85,7 @@ namespace Akka.CQRS.Infrastructure
         /// </summary>
         public const string JAEGER_AGENT_HOST = "JAEGER_AGENT_HOST";
 
-        public static Config BootstrapPhobos(this Config c, AppBootstrapConfig appConfig)
+        public static ActorSystemSetup BootstrapPhobos(this IServiceCollection services, AppBootstrapConfig appConfig)
         {
             var enablePhobos = Environment.GetEnvironmentVariable(ENABLE_PHOBOS);
             if (!bool.TryParse(enablePhobos, out var phobosEnabled))
@@ -105,13 +105,7 @@ namespace Akka.CQRS.Infrastructure
             var statsDPort = Environment.GetEnvironmentVariable(STATSD_PORT);
             var jaegerAgentHost = Environment.GetEnvironmentVariable(JAEGER_AGENT_HOST);
 
-            if (!string.IsNullOrEmpty(statsdUrl) && int.TryParse(statsDPort, out var portNum))
-                phobosConfig = ConfigurationFactory.ParseString($"phobos.monitoring.statsd.endpoint=\"{statsdUrl}\"" +
-                                                                Environment.NewLine +
-                                                                $"phobos.monitoring.statsd.port={portNum}" +
-                                                                Environment.NewLine +
-                                                                $"phobos.tracing.jaeger.agent.host={jaegerAgentHost}")
-                    .WithFallback(phobosConfig);
+           
 
             if (!appConfig.NeedClustering)
             {

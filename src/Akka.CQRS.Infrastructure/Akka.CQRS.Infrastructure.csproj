@@ -18,12 +18,17 @@
     <PackageReference Include="Akka.Cluster.Sharding" Version="$(AkkaVersion)" />
     <PackageReference Include="Akka.Persistence.Extras" Version="$(AkkaPersistenceExtrasVersion)" />
     <PackageReference Include="Akka.Bootstrap.Docker" Version="$(AkkaBootstrapVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="$(MicrosoftExtensionsVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Phobos'">
+    <!-- Uncomment these to install Phobos binaries -->    
+    <PackageReference Include="OpenTracing.Contrib.NetCore" Version="0.7.1" />
     <PackageReference Include="Phobos.Actor.Cluster" Version="$(PhobosVersion)" />
-    <PackageReference Include="Phobos.Tracing.Jaeger" Version="$(PhobosTracingVersion)" />
-    <PackageReference Include="Phobos.Monitoring.StatsD" Version="$(PhobosMonitoringVersion)" />
+    <PackageReference Include="Jaeger" Version="$(JaegerVersion)" />
+    <PackageReference Include="App.Metrics.Formatters.Prometheus" Version="$(AppMetricsVersion)" />
+    <PackageReference Include="App.Metrics.AspNetCore.All" Version="$(AppMetricsVersion)" />
+		<PackageReference Include="App.Metrics.Reporting.Console" Version="$(AppMetricsVersion)" />
   </ItemGroup>
 
   <ItemGroup>
