@@ -5,15 +5,15 @@ trigger:
     include:
       - dev
       - master
-      - lesson*
       - start
-
-name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+      - lesson*
 
 pr:
   autoCancel: true # indicates whether additional pushes to a PR should cancel in-progress runs for the same PR. Defaults to true
   branches:
-    include: [ dev, master ] # branch names which will trigger a build
+    include: [ dev, master, start, lesson* ] # branch names which will trigger a build
+
+name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
 jobs:
 - template: azure-pipeline.template.yaml
