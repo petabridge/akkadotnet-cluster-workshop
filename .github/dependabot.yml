@@ -1,0 +1,65 @@
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    target-branch: "dev"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
+
+  - package-ecosystem: "nuget"
+    target-branch: "master"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
+
+  - package-ecosystem: "nuget"
+    target-branch: "start"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
+
+  - package-ecosystem: "nuget"
+    target-branch: "lesson2"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
+
+  - package-ecosystem: "nuget"
+    target-branch: "lesson3"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
+
+  - package-ecosystem: "nuget"
+    target-branch: "lesson4"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
+
+  - package-ecosystem: "nuget"
+    target-branch: "lesson5"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
+
+  - package-ecosystem: "nuget"
+    target-branch: "lesson6"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"

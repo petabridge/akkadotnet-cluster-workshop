@@ -12,6 +12,7 @@ namespace Akka.CQRS.Pricing.Web.Controllers
     {
         public IActionResult Index()
         {
+            ViewData["AppVersion"] = typeof(HomeController).Assembly.ImageRuntimeVersion;
             return View();
         }
 
