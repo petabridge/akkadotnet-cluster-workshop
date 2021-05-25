@@ -1,0 +1,8 @@
+# staging settings
+kind: ConfigMap 
+apiVersion: v1 
+metadata:
+  name: pb-configs
+data:
+  # Configuration values can be set as key-value properties
+  environment: Development

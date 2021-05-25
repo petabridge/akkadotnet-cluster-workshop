@@ -2,38 +2,42 @@ apiVersion: v1
 kind: Service
 metadata:
   namespace: akka-cqrs
-  name: pricing
+  name: traders
   labels:
-    app: pricing
+    app: traders
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/metrics'
+    prometheus.io/port: '80'
 spec:
   clusterIP: None
   ports:
   - port: 5110
   selector:
-    app: pricing
+    app: traders
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   namespace: akka-cqrs
-  name: pricing
+  name: traders
   labels:
-    app: pricing
+    app: traders
 spec:
-  serviceName: pricing
+  serviceName: traders
   replicas: 2
   selector:
     matchLabels:
-      app: pricing
+      app: traders
   template:
     metadata:
       labels:
-        app: pricing
+        app: traders
     spec:
       terminationGracePeriodSeconds: 35
       containers:
-      - name: pricing
-        image: akka.cqrs.pricing:0.1.6
+      - name: traders
+        image: akka.cqrs.traders:0.2.1
         lifecycle:
           preStop:
             exec:
@@ -43,8 +47,6 @@ spec:
           value: AkkaTrader
         - name: ENABLE_PHOBOS
           value: "true"
-        - name: MONGO_CONNECTION_STR
-          value: "mongodb://mongodb:27017/akkaTrader"
         - name: STATSD_PORT
           value: "8125"
         - name: STATSD_URL
@@ -56,7 +58,7 @@ spec:
             fieldRef:
               fieldPath: metadata.name
         - name: CLUSTER_IP
-          value: "$(POD_NAME).pricing"
+          value: "$(POD_NAME).traders"
         - name: CLUSTER_PORT
           value: "5110"
         - name: CLUSTER_SEEDS
