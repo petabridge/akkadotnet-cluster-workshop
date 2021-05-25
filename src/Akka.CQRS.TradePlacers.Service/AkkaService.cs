@@ -47,7 +47,7 @@ namespace Akka.CQRS.TradePlacers.Service
             var conf = ConfigurationFactory.ParseString(config);
 
             _actorSystem = ActorSystem.Create("AkkaTrader", AppBootstrap.BootstrapAkka(_provider,
-                new AppBootstrapConfig(false, false), conf));
+                new AppBootstrapConfig(false, true), conf));
 
             var tradeRouter = _actorSystem.ActorOf(
                 Props.Empty.WithRouter(new ClusterRouterGroup(

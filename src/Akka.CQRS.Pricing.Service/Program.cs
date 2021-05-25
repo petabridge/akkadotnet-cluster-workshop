@@ -11,7 +11,7 @@ namespace Akka.CQRS.Pricing.Service
     {
         static async Task Main(string[] args)
         {
-            var host = new HostBuilder()
+            var host = WebHost.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddLogging();
@@ -22,7 +22,14 @@ namespace Akka.CQRS.Pricing.Service
                 {
                     configLogging.AddConsole();
                 })
-                .UseConsoleLifetime()
+                .Configure(app =>
+                {
+                    app.UseRouting();
+
+                    // enable App.Metrics routes
+                    app.UseMetricsAllMiddleware();
+                    app.UseMetricsAllEndpoints();
+                })
                 .Build();
 
             await host.RunAsync();

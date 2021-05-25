@@ -69,3 +69,5 @@ spec:
         ports:
         - containerPort: 5110
           protocol: TCP
+        - containerPort: 80
+          protocol: TCP

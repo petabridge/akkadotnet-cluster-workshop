@@ -73,10 +73,10 @@ spec:
         - name: JAEGER_AGENT_HOST
           value: "jaeger-agent"
         - name: ASPNETCORE_ENVIRONMENT
-        valueFrom:
-          configMapKeyRef:
-            name: pb-configs
-            key: environment
+          valueFrom:
+            configMapKeyRef:
+              name: pb-configs
+              key: environment
         livenessProbe:
           tcpSocket:
             port: 16666

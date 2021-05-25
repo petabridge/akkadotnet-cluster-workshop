@@ -52,6 +52,12 @@ namespace Akka.CQRS.Pricing.Web
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseRouting();
+
+            // enable App.Metrics routes
+            app.UseMetricsAllMiddleware();
+            app.UseMetricsAllEndpoints();
+
             app.UseStaticFiles();
             app.UseCookiePolicy();
 

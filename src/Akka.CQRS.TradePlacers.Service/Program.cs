@@ -3,6 +3,9 @@ using Akka.Bootstrap.Docker;
 using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.CQRS.Infrastructure;
 using Akka.CQRS.Infrastructure.Ops;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -13,7 +16,7 @@ namespace Akka.CQRS.TradePlacers.Service
     {
         static async Task Main(string[] args)
         {
-            var host = new HostBuilder()
+            var host = WebHost.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddLogging();
@@ -24,7 +27,14 @@ namespace Akka.CQRS.TradePlacers.Service
                 {
                     configLogging.AddConsole();
                 })
-                .UseConsoleLifetime()
+                .Configure(app =>
+                {
+                    app.UseRouting();
+
+                    // enable App.Metrics routes
+                    app.UseMetricsAllMiddleware();
+                    app.UseMetricsAllEndpoints();
+                })
                 .Build();
 
             await host.RunAsync();
