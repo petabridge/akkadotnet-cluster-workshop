@@ -65,7 +65,9 @@ namespace Akka.CQRS.Pricing.Web.Services
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            await _actorSystem.Terminate().ConfigureAwait(false);
+            await CoordinatedShutdown.Get(_actorSystem)
+                .Run(CoordinatedShutdown.ClrExitReason.Instance)
+                .ConfigureAwait(false);
         }
     }
 }

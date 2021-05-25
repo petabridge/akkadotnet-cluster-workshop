@@ -39,7 +39,7 @@ namespace Akka.CQRS.Pricing.Service
             var config = File.ReadAllText("app.conf");
             var conf = ConfigurationFactory.ParseString(config);
 
-            _actorSystem = ActorSystem.Create("AkkaTrader", AppBootstrap.BootstrapAkka(_provider, 
+            _actorSystem = ActorSystem.Create("AkkaTrader", AppBootstrap.BootstrapAkka(_provider,
                 new AppBootstrapConfig(true, true), conf));
 
             var sharding = ClusterSharding.Get(_actorSystem);
@@ -69,9 +69,9 @@ namespace Akka.CQRS.Pricing.Service
                 }
             });
 
-            Cluster.Cluster.Get(_actorSystem).RegisterOnMemberRemoved(() =>
+            // need to guarantee that host shuts down if ActorSystem shuts down
+            _actorSystem.WhenTerminated.ContinueWith(tr =>
             {
-                // need to terminate host in order to force process to exit
                 _lifetime.StopApplication();
             });
 

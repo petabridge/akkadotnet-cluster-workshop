@@ -15,8 +15,8 @@ namespace Akka.CQRS.Pricing.Service
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddLogging();
-                    services.AddHostedService<AkkaService>();
                     services.AddPhobosApm();
+                    services.AddHostedService<AkkaService>();
                 })
                 .ConfigureLogging((hostContext, configLogging) =>
                 {
