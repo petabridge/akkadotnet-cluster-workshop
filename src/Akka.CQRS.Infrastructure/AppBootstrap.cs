@@ -13,6 +13,7 @@ using Akka.CQRS.Serialization;
 using Akka.DependencyInjection;
 using App.Metrics;
 using App.Metrics.Formatters.Prometheus;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTracing;
 using static Akka.CQRS.Infrastructure.MongoDbHoconHelper;
@@ -44,8 +45,20 @@ namespace Akka.CQRS.Infrastructure
         /// </summary>
         /// <param name="services">The services collection being configured by the application.</param>
         /// <returns>The original <see cref="IServiceCollection"/></returns>
-        public static void BootstrapApm(this IServiceCollection services)
+        public static void AddPhobosApm(this IServiceCollection services)
         {
+            // enables OpenTracing for ASP.NET / .NET Core
+            services.AddOpenTracing(o =>
+            {
+                o.ConfigureAspNetCore(a =>
+                {
+                    a.Hosting.OperationNameResolver = context => $"{context.Request.Method} {context.Request.Path}";
+
+                    // skip Prometheus HTTP /metrics collection from appearing in our tracing system
+                    a.Hosting.IgnorePatterns.Add(x => x.Request.Path.StartsWithSegments(new PathString("/metrics")));
+                });
+                o.ConfigureGenericDiagnostics(c => { });
+            });
             services.ConfigureAppMetrics();
             services.ConfigureJaegerTracing();
         }
@@ -234,18 +247,18 @@ namespace Akka.CQRS.Infrastructure
 
 #endif
         }
+    }
 
-        public sealed class AppBootstrapConfig
+    public sealed class AppBootstrapConfig
+    {
+        public AppBootstrapConfig(bool needPersistence = true, bool needClustering = true)
         {
-            public AppBootstrapConfig(bool needPersistence = true, bool needClustering = true)
-            {
-                NeedPersistence = needPersistence;
-                NeedClustering = needClustering;
-            }
-
-            public bool NeedPersistence { get; }
-
-            public bool NeedClustering { get; }
+            NeedPersistence = needPersistence;
+            NeedClustering = needClustering;
         }
+
+        public bool NeedPersistence { get; }
+
+        public bool NeedClustering { get; }
     }
 }
