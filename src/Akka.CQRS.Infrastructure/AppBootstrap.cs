@@ -74,7 +74,7 @@ namespace Akka.CQRS.Infrastructure
 
         public const string JaegerAgentPortEnvironmentVar = "JAEGER_AGENT_PORT";
 
-        public const int DefaultJaegerAgentPort = 6832;
+        public const int DefaultJaegerAgentPort = 6831;
 
         public static void ConfigureAppMetrics(this IServiceCollection services)
         {
