@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Akka.CQRS.Infrastructure;
 using Akka.CQRS.Pricing.Web.Hubs;
 using Akka.CQRS.Pricing.Web.Services;
 using Microsoft.AspNetCore.Builder;
@@ -35,7 +36,9 @@ namespace Akka.CQRS.Pricing.Web
 
             services.AddMvc();
             services.AddSignalR();
-            services.AddSingleton<StockBootstrap, StockBootstrap>();
+            services.AddPhobosApm();
+            services.AddTransient<StockHubHelper>();
+            services.AddHostedService<AkkaService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +53,12 @@ namespace Akka.CQRS.Pricing.Web
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseRouting();
+
+            // enable App.Metrics routes
+            app.UseMetricsAllMiddleware();
+            app.UseMetricsAllEndpoints();
+
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
@@ -58,8 +67,6 @@ namespace Akka.CQRS.Pricing.Web
                 ep.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
                 ep.MapHub<StockHub>("/hubs/stockHub");
             });
-
-            _ = app.ApplicationServices.GetService<StockBootstrap>().StartAsync(CancellationToken.None); //start Akka.NET
         }
     }
 }

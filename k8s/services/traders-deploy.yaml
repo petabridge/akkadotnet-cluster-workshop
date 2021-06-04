@@ -5,6 +5,10 @@ metadata:
   name: traders
   labels:
     app: traders
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/metrics'
+    prometheus.io/port: '80'
 spec:
   clusterIP: None
   ports:
@@ -33,7 +37,7 @@ spec:
       terminationGracePeriodSeconds: 35
       containers:
       - name: traders
-        image: akka.cqrs.traders:0.1.6
+        image: akka.cqrs.traders:0.2.1
         lifecycle:
           preStop:
             exec:
@@ -64,4 +68,6 @@ spec:
             port: 5110
         ports:
         - containerPort: 5110
+          protocol: TCP
+        - containerPort: 80
           protocol: TCP

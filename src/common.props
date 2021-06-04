@@ -2,9 +2,8 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2019 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.1.0</VersionPrefix>
-    <PackageReleaseNotes>Fixed `NullReferenceException` when recovering `MatchAggregatorSnapshot` records with no price and volume updates.
-Fixed issue with BSON serialization for `MatchAggregatorSnapshot` records.</PackageReleaseNotes>
+    <VersionPrefix>0.2.2</VersionPrefix>
+    <PackageReleaseNotes>Added footer that displays assembly version on Pricing UI</PackageReleaseNotes>
     <PackageIconUrl>
     </PackageIconUrl>
     <PackageProjectUrl>
@@ -14,7 +13,6 @@ Fixed issue with BSON serialization for `MatchAggregatorSnapshot` records.</Pack
     <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
-    <NBenchVersion>1.2.2</NBenchVersion>
     <XunitVersion>2.4.1</XunitVersion>
     <TestSdkVersion>16.10.0</TestSdkVersion>
     <AkkaVersion>1.4.20</AkkaVersion>
@@ -23,15 +21,20 @@ Fixed issue with BSON serialization for `MatchAggregatorSnapshot` records.</Pack
     <FluentAssertionsVersion>5.10.3</FluentAssertionsVersion>
     <GoogleProtobufVersion>3.17.2</GoogleProtobufVersion>
     <PetabridgeCmdVersion>0.8.5</PetabridgeCmdVersion>
+    <MicrosoftExtensionsVersion>3.1.0</MicrosoftExtensionsVersion>
+    <PhobosVersion>1.1.4</PhobosVersion>
+    <AppMetricsVersion>4.2.0</AppMetricsVersion>
+    <JaegerVersion>1.0.0</JaegerVersion>
   </PropertyGroup>
   <PropertyGroup>
     <NetCoreVersion>netcoreapp3.1</NetCoreVersion>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Phobos'">
-    <PhobosVersion>0.7.0</PhobosVersion>
-    <PhobosTracingVersion>0.6.0</PhobosTracingVersion>
-    <PhobosMonitoringVersion>0.8.0</PhobosMonitoringVersion>
     <DefineConstants>$(DefineConstants);RELEASE;</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NetCoreVersion>netcoreapp3.1</NetCoreVersion>
+    <NetStandardVersion>netstandard2.0</NetStandardVersion>
   </PropertyGroup>
 </Project>

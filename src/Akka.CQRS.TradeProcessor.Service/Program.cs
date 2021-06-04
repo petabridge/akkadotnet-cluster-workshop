@@ -1,42 +1,40 @@
-﻿using System.IO;
-using Akka.Actor;
-using Akka.Cluster.Sharding;
-using Akka.Configuration;
+﻿using System.Threading.Tasks;
 using Akka.CQRS.Infrastructure;
-using Akka.CQRS.TradeProcessor.Actors;
-using Petabridge.Cmd.Cluster;
-using Petabridge.Cmd.Cluster.Sharding;
-using Petabridge.Cmd.Host;
-using Petabridge.Cmd.Remote;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Akka.CQRS.TradeProcessor.Service
 {
     class Program
     {
-        static int Main(string[] args)
+        static async Task Main(string[] args)
         {
-          var config = File.ReadAllText("app.conf");
-            var conf = ConfigurationFactory.ParseString(config).BoostrapApplication(new AppBootstrapConfig(true, true));
+            var host = WebHost.CreateDefaultBuilder(args)
+                .ConfigureServices((hostContext, services) =>
+                {
+                    services.AddLogging();
+                    services.AddPhobosApm();
+                    services.AddHostedService<AkkaService>();
+                })
+                .ConfigureLogging((hostContext, configLogging) =>
+                {
+                    configLogging.AddConsole();
+                })
+                .Configure(app =>
+                {
+                    app.UseRouting();
 
-            var actorSystem = ActorSystem.Create("AkkaTrader", conf);
+                    // enable App.Metrics routes
+                    app.UseMetricsAllMiddleware();
+                    app.UseMetricsAllEndpoints();
+                })
+                .Build();
 
-            Cluster.Cluster.Get(actorSystem).RegisterOnMemberUp(() =>
-            {
-                var sharding = ClusterSharding.Get(actorSystem);
-
-                var shardRegion = sharding.Start("orderBook", s => OrderBookActor.PropsFor(s), ClusterShardingSettings.Create(actorSystem),
-                    new StockShardMsgRouter());
-            });
-
-            // start Petabridge.Cmd (for external monitoring / supervision)
-            var pbm = PetabridgeCmd.Get(actorSystem);
-            pbm.RegisterCommandPalette(ClusterCommands.Instance);
-            pbm.RegisterCommandPalette(ClusterShardingCommands.Instance);
-            pbm.RegisterCommandPalette(RemoteCommands.Instance);
-            pbm.Start();
-
-            actorSystem.WhenTerminated.Wait();
-            return 0;
+            await host.RunAsync();
         }
     }
 }
