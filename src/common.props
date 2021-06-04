@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Copyright>Copyright © 2015-2019 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.2.1</VersionPrefix>
+    <VersionPrefix>0.2.2</VersionPrefix>
     <PackageReleaseNotes>Added footer that displays assembly version on Pricing UI</PackageReleaseNotes>
     <PackageIconUrl>
     </PackageIconUrl>

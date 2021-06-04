@@ -9,7 +9,10 @@ using Akka.CQRS.Infrastructure;
 using Akka.CQRS.Pricing.Web.Actors;
 using Akka.CQRS.Pricing.Web.Hubs;
 using Akka.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OpenTracing;
+using ServiceProvider = Akka.DependencyInjection.ServiceProvider;
 
 namespace Akka.CQRS.Pricing.Web.Services
 {
@@ -36,23 +39,28 @@ namespace Akka.CQRS.Pricing.Web.Services
             _actorSystem = ActorSystem.Create("AkkaTrader", AppBootstrap.BootstrapAkka(_provider,
                 new AppBootstrapConfig(false, false), conf));
 
+            var tracing = _provider.GetRequiredService<ITracer>();
+
             var sp = ServiceProvider.For(_actorSystem);
-            var stockPublisherActor =
+            using(var createActorsSpan = tracing.BuildSpan("SpawnActors").StartActive()){
+                var stockPublisherActor =
                 _actorSystem.ActorOf(sp.Props<StockPublisherActor>(), "stockPublisher");
 
-            var initialContactAddress = Environment.GetEnvironmentVariable("CLUSTER_SEEDS")?.Trim().Split(",")
-                .Select(x => Address.Parse(x)).ToList();
+                var initialContactAddress = Environment.GetEnvironmentVariable("CLUSTER_SEEDS")?.Trim().Split(",")
+                    .Select(x => Address.Parse(x)).ToList();
 
-            if (initialContactAddress == null)
-            {
-                _actorSystem.Log.Error("No initial cluster contacts found. Please be sure that the CLUSTER_SEEDS environment variable is populated with at least one address.");
-                return Task.FromException(new ConfigurationException(
-                    "No initial cluster contacts found. Please be sure that the CLUSTER_SEEDS environment variable is populated with at least one address."));
+                if (initialContactAddress == null)
+                {
+                    _actorSystem.Log.Error("No initial cluster contacts found. Please be sure that the CLUSTER_SEEDS environment variable is populated with at least one address.");
+                    return Task.FromException(new ConfigurationException(
+                        "No initial cluster contacts found. Please be sure that the CLUSTER_SEEDS environment variable is populated with at least one address."));
+                }
+
+                var configurator = _actorSystem.ActorOf(
+                    Props.Create(() => new StockEventConfiguratorActor(stockPublisherActor, initialContactAddress)),
+                    "configurator");
             }
 
-            var configurator = _actorSystem.ActorOf(
-                Props.Create(() => new StockEventConfiguratorActor(stockPublisherActor, initialContactAddress)),
-                "configurator");
 
             // need to guarantee that host shuts down if ActorSystem shuts down
             _actorSystem.WhenTerminated.ContinueWith(tr =>

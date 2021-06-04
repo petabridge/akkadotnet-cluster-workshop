@@ -37,6 +37,7 @@ namespace Akka.CQRS.Pricing.Web
             services.AddMvc();
             services.AddSignalR();
             services.AddPhobosApm();
+            services.AddTransient<StockHubHelper>();
             services.AddHostedService<AkkaService>();
         }
 

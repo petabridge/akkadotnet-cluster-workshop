@@ -23,6 +23,9 @@ for %%f in (%location%/*.yaml) do (
     kubectl apply -f "%location%/%%~nxf" -n "%namespace%"
 )
 
+echo "Waiting 10 seconds for infrastructure to be ready..."
+TIMEOUT /T 10
+
 echo "Creating all services..."
 for %%f in (%~dp0/k8s/services/*.yaml) do (
     echo "Deploying %%~nxf"
