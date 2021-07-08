@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="Akka.HealthCheck.Persistence" Version="0.3.2" />
-    <PackageReference Include="Akka.Persistence.MongoDb" Version="1.4.19" />
+    <PackageReference Include="Akka.Persistence.MongoDb" Version="1.4.21" />
     <PackageReference Include="Petabridge.Cmd.Cluster" Version="$(PetabridgeCmdVersion)" />
     <PackageReference Include="Petabridge.Cmd.Cluster.Sharding" Version="$(PetabridgeCmdVersion)" />
     <PackageReference Include="Petabridge.Cmd.Remote" Version="$(PetabridgeCmdVersion)" />
