@@ -18,7 +18,7 @@
     <AkkaVersion>1.4.23</AkkaVersion>
     <AkkaBootstrapVersion>0.5.3</AkkaBootstrapVersion>
     <AkkaPersistenceExtrasVersion>0.5.2</AkkaPersistenceExtrasVersion>
-    <FluentAssertionsVersion>5.10.3</FluentAssertionsVersion>
+    <FluentAssertionsVersion>6.0.0</FluentAssertionsVersion>
     <GoogleProtobufVersion>3.17.3</GoogleProtobufVersion>
     <PetabridgeCmdVersion>0.8.5</PetabridgeCmdVersion>
     <MicrosoftExtensionsVersion>3.1.0</MicrosoftExtensionsVersion>
