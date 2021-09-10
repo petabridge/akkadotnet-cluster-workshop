@@ -22,7 +22,7 @@ Fixed issue with BSON serialization for `MatchAggregatorSnapshot` records.</Pack
     <AkkaPersistenceExtrasVersion>0.5.2</AkkaPersistenceExtrasVersion>
     <FluentAssertionsVersion>6.1.0</FluentAssertionsVersion>
     <GoogleProtobufVersion>3.17.3</GoogleProtobufVersion>
-    <PetabridgeCmdVersion>1.0.0</PetabridgeCmdVersion>
+    <PetabridgeCmdVersion>1.0.1</PetabridgeCmdVersion>
   </PropertyGroup>
   <PropertyGroup>
     <NetCoreVersion>netcoreapp3.1</NetCoreVersion>
