@@ -15,7 +15,7 @@
   <PropertyGroup>
     <XunitVersion>2.4.1</XunitVersion>
     <TestSdkVersion>16.11.0</TestSdkVersion>
-    <AkkaVersion>1.4.26</AkkaVersion>
+    <AkkaVersion>1.4.27</AkkaVersion>
     <AkkaBootstrapVersion>0.5.3</AkkaBootstrapVersion>
     <AkkaPersistenceExtrasVersion>0.5.3</AkkaPersistenceExtrasVersion>
     <FluentAssertionsVersion>6.1.0</FluentAssertionsVersion>
