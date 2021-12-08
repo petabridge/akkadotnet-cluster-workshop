@@ -19,6 +19,6 @@ jobs:
 - template: azure-pipeline.template.yaml
   parameters:
     name: Ubuntu
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-latest'
     scriptFileName: ./build.sh
     scriptArgs: 'all customNuGetSource=$(phobosNuGet)'
