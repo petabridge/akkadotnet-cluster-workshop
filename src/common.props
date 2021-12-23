@@ -23,7 +23,7 @@
     <PetabridgeCmdVersion>0.8.5</PetabridgeCmdVersion>
     <MicrosoftExtensionsVersion>3.1.0</MicrosoftExtensionsVersion>
     <PhobosVersion>1.1.4</PhobosVersion>
-    <AppMetricsVersion>4.2.0</AppMetricsVersion>
+    <AppMetricsVersion>4.3.0</AppMetricsVersion>
     <JaegerVersion>1.0.3</JaegerVersion>
   </PropertyGroup>
   <PropertyGroup>
