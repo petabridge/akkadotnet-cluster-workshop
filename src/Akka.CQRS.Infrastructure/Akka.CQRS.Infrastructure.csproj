@@ -21,7 +21,7 @@
     <PackageReference Include="App.Metrics.Formatters.Prometheus" Version="$(AppMetricsVersion)" />
     <PackageReference Include="App.Metrics.AspNetCore.All" Version="$(AppMetricsVersion)" />
     <PackageReference Include="App.Metrics.Reporting.Console" Version="$(AppMetricsVersion)" />
-    <PackageReference Include="OpenTracing.Contrib.NetCore" Version="0.7.1" />
+    <PackageReference Include="OpenTracing.Contrib.NetCore" Version="0.8.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Phobos'">
