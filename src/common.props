@@ -20,7 +20,7 @@ Fixed issue with BSON serialization for `MatchAggregatorSnapshot` records.</Pack
     <AkkaVersion>1.4.37</AkkaVersion>
     <AkkaBootstrapVersion>0.5.3</AkkaBootstrapVersion>
     <AkkaPersistenceExtrasVersion>0.5.4</AkkaPersistenceExtrasVersion>
-    <FluentAssertionsVersion>6.5.1</FluentAssertionsVersion>
+    <FluentAssertionsVersion>6.6.0</FluentAssertionsVersion>
     <GoogleProtobufVersion>3.20.0</GoogleProtobufVersion>
     <PetabridgeCmdVersion>0.8.5</PetabridgeCmdVersion>
   </PropertyGroup>
