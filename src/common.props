@@ -16,6 +16,7 @@
     <XunitVersion>2.4.1</XunitVersion>
     <TestSdkVersion>17.2.0</TestSdkVersion>
     <AkkaVersion>1.4.39</AkkaVersion>
+    <AkkaMongoDbVersion>1.4.39</AkkaMongoDbVersion>
     <AkkaBootstrapVersion>0.5.3</AkkaBootstrapVersion>
     <AkkaPersistenceExtrasVersion>0.5.4</AkkaPersistenceExtrasVersion>
     <FluentAssertionsVersion>6.7.0</FluentAssertionsVersion>
