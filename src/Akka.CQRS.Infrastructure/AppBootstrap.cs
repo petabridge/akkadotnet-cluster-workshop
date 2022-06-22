@@ -11,6 +11,7 @@ using Akka.Configuration;
 using Akka.CQRS.Infrastructure.Ops;
 using Akka.CQRS.Serialization;
 using Akka.DependencyInjection;
+using Akka.Persistence.MongoDb;
 using App.Metrics;
 using App.Metrics.Formatters.Prometheus;
 using Microsoft.AspNetCore.Http;
@@ -166,7 +167,9 @@ namespace Akka.CQRS.Infrastructure
                     Console.WriteLine("Connecting to MongoDb at {0}", mongoConnectionString);
                 }
 
-                config = c.WithFallback(GetMongoHocon(mongoConnectionString));
+                config = c
+                    .WithFallback(GetMongoHocon(mongoConnectionString))
+                    .WithFallback(MongoDbPersistence.DefaultConfiguration());
             }
 
             config = config

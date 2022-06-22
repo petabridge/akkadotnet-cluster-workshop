@@ -15,6 +15,7 @@
     <PackageReference Include="Akka.Cluster.Sharding" Version="$(AkkaVersion)" />
     <PackageReference Include="Akka.DependencyInjection" Version="$(AkkaVersion)" />
     <PackageReference Include="Akka.Persistence.Extras" Version="$(AkkaPersistenceExtrasVersion)" />
+    <PackageReference Include="Akka.Persistence.MongoDb" Version="$(AkkaMongoDbVersion)" />
     <PackageReference Include="Akka.Bootstrap.Docker" Version="$(AkkaBootstrapVersion)" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="$(MicrosoftExtensionsVersion)" />
     <PackageReference Include="Jaeger" Version="$(JaegerVersion)" />
