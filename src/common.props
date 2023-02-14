@@ -22,7 +22,7 @@
     <FluentAssertionsVersion>6.7.0</FluentAssertionsVersion>
     <GoogleProtobufVersion>3.21.4</GoogleProtobufVersion>
     <PetabridgeCmdVersion>0.8.5</PetabridgeCmdVersion>
-    <MicrosoftExtensionsVersion>3.1.0</MicrosoftExtensionsVersion>
+    <MicrosoftExtensionsVersion>7.0.1</MicrosoftExtensionsVersion>
     <PhobosVersion>1.1.4</PhobosVersion>
     <AppMetricsVersion>4.3.0</AppMetricsVersion>
     <JaegerVersion>1.0.3</JaegerVersion>
